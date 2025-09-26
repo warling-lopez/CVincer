@@ -387,6 +387,9 @@ const TargetIcon = ({ className }) => (
   </svg>
 );
 
+const redirectToSignUp = () => {
+
+}
 // --- COMPONENTS/UI ---
 /**
  * Button Component (mimics shadcn/ui)
@@ -542,7 +545,7 @@ const Hero = () => {
         <p className="text-lg lg:text-xl text-slate-600 mb-10 max-w-3xl mx-auto">
           {t("hero.subtitle")}
         </p>
-        <Button size="xl" color="blue">
+        <Button size="xl" >
           {t("hero.cta")}
         </Button>
       </div>
