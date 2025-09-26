@@ -125,7 +125,7 @@ export default function WaitlistCard() {
             </Button>
             <Button 
               onClick={handleSubmit}
-              className="w-full sm:flex-1 order-1 sm:order-2"
+              className="w-full bg-chart-3 sm:flex-1 order-1 sm:order-2"
               disabled={!formData.name.trim() || !formData.email.trim()}
             >
               Unirme a la lista

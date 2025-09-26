@@ -67,7 +67,7 @@ export function DialogDemo(props) {
               <Label htmlFor="username-1">{props.labelMail}</Label>
               <Input id="username-1" name="username" defaultValue="@peduarte" />
             </div>
-          </div>
+          </div> <br />
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">{props.labelCancel}</Button>
