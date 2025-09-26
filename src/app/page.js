@@ -6,6 +6,7 @@ import React, {
   useContext,
   useMemo,
 } from "react";
+import { DialogDemo } from "@/components/waitList-Form";
 
 // --- UTILS ---
 // Helper for combining Tailwind classes conditionally
@@ -15,19 +16,27 @@ const cn = (...classes) => classes.filter(Boolean).join(" ");
 const translations = {
   es: {
     header: {
-      appName: "CV Optimizer AI",
+      appName: "CVincer",
       cta: "Empezar ahora",
     },
     hero: {
-      tag: "Transforma tu CV, acelera tu carrera",
-      title:
-        "Deja de ser ignorado. Adapta tu CV con IA y consigue la entrevista.",
+      tag: "Transforma Tu CV y Consigue Esa Entrevista",
+      title: "Deja de ser invisible. Adapta tu CV y consigue la entrevista.",
       subtitle:
         "Nuestra IA analiza la oferta laboral y optimiza tu currículum para pasar los filtros ATS y captar la atención de los reclutadores. Menos esfuerzo, más resultados.",
       cta: "Optimiza tu CV gratis",
+      ctaTitle: "Únete a la lista de espera",
+      ctaDescription:
+        "Sé el primero en acceder a nuestra herramienta de optimización de CV.",
+      ctaLabel: [
+        "Nombre",
+        "Correo Electrónico",
+        "Cancelar",
+        "Unirme a la lista",
+      ],
     },
     problem: {
-      title: "El problema no eres tú, es cómo te presentas",
+      title: "El Problema No Eres Tú, Es Cómo Te Presentas",
       subtitle:
         "Candidatos excelentes son descartados a diario por errores comunes que se pueden evitar.",
       cards: [
@@ -109,12 +118,12 @@ const translations = {
       cta: "Empezar gratis",
     },
     footer: {
-      copy: "© 2024 CV Optimizer AI. Todos los derechos reservados.",
+      copy: "© 2024 CVincer. Todos los derechos reservados.",
     },
   },
   en: {
     header: {
-      appName: "CV Optimizer AI",
+      appName: "CVincer",
       cta: "Get Started Now",
     },
     hero: {
@@ -124,6 +133,9 @@ const translations = {
       subtitle:
         "Our AI analyzes the job offer and optimizes your resume to pass ATS filters and capture recruiters' attention. Less effort, more results.",
       cta: "Optimize Your CV for Free",
+      ctaTitle: "Join the Waitlist",
+      ctaDescription: "Be the first to access our CV optimization tool.",
+      ctaLabel: ["Name", "Email", "Cancel", "Join Waitlist"],
     },
     problem: {
       title: "The problem isn't you, it's how you present yourself",
@@ -208,7 +220,7 @@ const translations = {
       cta: "Get Started for Free",
     },
     footer: {
-      copy: "© 2024 CV Optimizer AI. All rights reserved.",
+      copy: "© 2024 CVincer. All rights reserved.",
     },
   },
 };
@@ -387,9 +399,7 @@ const TargetIcon = ({ className }) => (
   </svg>
 );
 
-const redirectToSignUp = () => {
-
-}
+const redirectToSignUp = () => {};
 // --- COMPONENTS/UI ---
 /**
  * Button Component (mimics shadcn/ui)
@@ -476,7 +486,6 @@ const Button = ({
     </button>
   );
 };
- 
 
 // --- COMPONENTS/COMMON ---
 const LanguageToggle = () => {
@@ -521,9 +530,16 @@ const Header = () => {
         </div>
         <div className="flex items-center space-x-4">
           <LanguageToggle />
-          <Button size="sm">
-            {t("header.cta")}
-          </Button>
+          <DialogDemo
+            variant="primary"
+            text={t("header.cta")}
+            title={t("hero.ctaTitle")}
+            desc={t("hero.ctaDescription")}
+            labelName={t("hero.ctaLabel.0")}
+            labelMail={t("hero.ctaLabel.1")}
+            labelCancel={t("hero.ctaLabel.2")}
+            labelSave={t("hero.ctaLabel.3")}
+          />
         </div>
       </div>
     </header>
@@ -536,18 +552,27 @@ const Hero = () => {
   return (
     <section className="bg-slate-50">
       <div className="container mx-auto px-6 py-20 lg:py-32 text-center">
-        <span className="inline-block bg-amber-300 text-amber-800 text-sm font-semibold px-4 py-1 rounded-full mb-4">
+        <span className="inline-block bg-amber-400 text-slate-800 text-sm font-semibold px-4 py-1 rounded-full mb-4">
           {t("hero.tag")}
         </span>
-        <h1 className="text-4xl lg:text-6xl font-extrabold text-blue-900 leading-tight mb-6 max-w-4xl mx-auto">
+        <h1 className="text-3xl lg:text-7xl  font-extrabold text-blue-900 leading-tight mb-6 max-w-4xl mx-auto">
           {t("hero.title")}
         </h1>
-        <p className="text-lg lg:text-xl text-slate-600 mb-10 max-w-3xl mx-auto">
+        <br />
+        <p className="text-sm lg:text-xl text-slate-600 mb-10 max-w-3xl mx-auto">
           {t("hero.subtitle")}
         </p>
-        <Button size="xl" >
-          {t("hero.cta")}
-        </Button>
+        <DialogDemo
+          variant="primary"
+          size="cta"
+          text={t("hero.cta")}
+          title={t("hero.ctaTitle")}
+          desc={t("hero.ctaDescription")}
+          labelName={t("hero.ctaLabel.0")}
+          labelMail={t("hero.ctaLabel.1")}
+          labelCancel={t("hero.ctaLabel.2")}
+          labelSave={t("hero.ctaLabel.3")}
+        />
       </div>
     </section>
   );
@@ -570,7 +595,9 @@ const ProblemStatement = () => {
           <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
             {t("problem.title")}
           </h2>
-          <p className="text-lg text-slate-600">{t("problem.subtitle")}</p>
+          <p className="text-md lg:text-lg text-slate-600">
+            {t("problem.subtitle")}
+          </p>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
           {problems.map((problem, index) => (
@@ -650,7 +677,7 @@ const Features = () => {
 const CtaSection = () => {
   const { t } = useLanguage();
   return (
-    <section className="bg-blue-800">
+    <section className="bg-chart-3">
       <div className="container mx-auto px-6 py-20 lg:py-24 text-center">
         <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4 max-w-2xl mx-auto">
           {t("ctaSection.title")}
@@ -658,9 +685,17 @@ const CtaSection = () => {
         <p className="text-lg text-blue-200 mb-8 max-w-3xl mx-auto">
           {t("ctaSection.subtitle")}
         </p>
-        <Button size="xl" color="gold">
-          {t("ctaSection.cta")}
-        </Button>
+        <DialogDemo
+            variant="secondary"
+            size="cta"
+            text={t("header.cta")}
+            title={t("hero.ctaTitle")}
+            desc={t("hero.ctaDescription")}
+            labelName={t("hero.ctaLabel.0")}
+            labelMail={t("hero.ctaLabel.1")}
+            labelCancel={t("hero.ctaLabel.2")}
+            labelSave={t("hero.ctaLabel.3")}
+          />
       </div>
     </section>
   );
@@ -669,8 +704,8 @@ const CtaSection = () => {
 const Footer = () => {
   const { t } = useLanguage();
   return (
-    <footer className="bg-slate-900 text-slate-400">
-      <div className="container mx-auto px-6 py-6 text-center">
+    <footer className="bg-foreground text-muted-foreground">
+      <div className="container mx-auto px-6 py-2 text-center">
         <p>{t("footer.copy")}</p>
       </div>
     </footer>
