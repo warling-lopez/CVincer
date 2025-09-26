@@ -402,6 +402,7 @@ const TargetIcon = ({ className }) => (
  * @param {function} [props.onClick] - Click event handler.
  * @param {React.ReactNode} props.children - The content of the button.
  */
+
 const Button = ({
   variant = "primary",
   size = "md",
@@ -472,6 +473,7 @@ const Button = ({
     </button>
   );
 };
+ 
 
 // --- COMPONENTS/COMMON ---
 const LanguageToggle = () => {
@@ -516,7 +518,7 @@ const Header = () => {
         </div>
         <div className="flex items-center space-x-4">
           <LanguageToggle />
-          <Button size="sm" color="gold">
+          <Button size="sm">
             {t("header.cta")}
           </Button>
         </div>
