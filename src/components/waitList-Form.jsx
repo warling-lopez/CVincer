@@ -72,11 +72,9 @@ export function DialogDemo(props) {
             <DialogClose asChild>
               <Button variant="outline">{props.labelCancel}</Button>
             </DialogClose>
-            <dialogclose asChild>
             <Button type="submit" onSubmit={handleSubmit}>
               {props.labelSave}
-            </Button>
-            </dialogclose>
+            </Button>            
           </DialogFooter>
         </form>
       </DialogContent>
