@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Mail } from "lucide-react";
+import SupabaseSessionHandler from "@/components/SupabaseSessionHandler";
 
 export default function WaitlistCard() {
   const [isRegistered, setIsRegistered] = useState(false);
@@ -12,6 +13,7 @@ export default function WaitlistCard() {
     name: '',
     email: ''
   });
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -80,6 +82,7 @@ export default function WaitlistCard() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4 py-8">
+      <SupabaseSessionHandler />
       <Card className="w-full max-w-md mx-auto">
           <CardHeader className="px-6">
             <CardTitle className="text-lg sm:text-xl">Únete a la Lista de Espera</CardTitle>

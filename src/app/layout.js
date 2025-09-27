@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -16,6 +17,7 @@ export const metadata = {
   title: "CVicer",
   description: "AI Powered Resume Builder",
 };
+
 
 export default function RootLayout({ children }) {
   return (
@@ -39,6 +41,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        
         {children}
       </body>
     </html>
