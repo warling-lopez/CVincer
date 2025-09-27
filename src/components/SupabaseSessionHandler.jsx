@@ -2,29 +2,41 @@
 "use client";
 
 import { useEffect } from "react";
-import supabase from "@/supabase/supabase";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
+function parseHash(hash) {
+  return Object.fromEntries(new URLSearchParams(hash.replace(/^#/, "")));
+}
 
 export default function SupabaseSessionHandler() {
   useEffect(() => {
     const handleSession = async () => {
       if (!window.location.hash) return;
 
-      const { data, error } = await supabase.auth.getSessionFromUrl({
-        storeSession: true, // Supabase ya lo guarda en su storage
-      });
+      const params = parseHash(window.location.hash);
+      const access_token = params["access_token"];
+      const refresh_token = params["refresh_token"];
 
-      if (error) {
-        console.error("Error obteniendo sesión desde URL:", error);
-        return;
+      if (access_token && refresh_token) {
+        const { data, error } = await supabase.auth.setSession({
+          access_token,
+          refresh_token,
+        });
+
+        if (error) {
+          console.error("Error al establecer sesión:", error);
+        } else {
+          localStorage.setItem("supabase_session", JSON.stringify(data.session));
+          console.log("Sesión guardada:", data.session);
+        }
       }
 
-      if (data && data.session) {
-        // Guardar también en localStorage manualmente
-        localStorage.setItem("supabase_session", JSON.stringify(data.session));
-        console.log("Sesión guardada en localStorage:", data.session);
-      }
-
-      // Limpia el hash para no dejar tokens en la URL
+      // limpiar hash
       const cleanUrl =
         window.location.origin +
         window.location.pathname +
