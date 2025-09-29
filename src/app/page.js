@@ -7,6 +7,7 @@ import React, {
   useMemo,
 } from "react";
 import { DialogDemo } from "@/components/waitList-Form";
+import WaitlistAlert from "@/components/confirm-waitlist";
 
 // --- UTILS ---
 // Helper for combining Tailwind classes conditionally
@@ -551,6 +552,7 @@ const Hero = () => {
   const { t } = useLanguage();
   return (
     <section className="bg-slate-50">
+      <WaitlistAlert />
       <div className="container mx-auto px-6 py-20 lg:py-32 text-center">
         <span className="inline-block bg-amber-400 text-slate-800 text-sm font-semibold px-4 py-1 rounded-full mb-4">
           {t("hero.tag")}
@@ -686,16 +688,16 @@ const CtaSection = () => {
           {t("ctaSection.subtitle")}
         </p>
         <DialogDemo
-            variant="secondary"
-            size="cta"
-            text={t("header.cta")}
-            title={t("hero.ctaTitle")}
-            desc={t("hero.ctaDescription")}
-            labelName={t("hero.ctaLabel.0")}
-            labelMail={t("hero.ctaLabel.1")}
-            labelCancel={t("hero.ctaLabel.2")}
-            labelSave={t("hero.ctaLabel.3")}
-          />
+          variant="secondary"
+          size="cta"
+          text={t("header.cta")}
+          title={t("hero.ctaTitle")}
+          desc={t("hero.ctaDescription")}
+          labelName={t("hero.ctaLabel.0")}
+          labelMail={t("hero.ctaLabel.1")}
+          labelCancel={t("hero.ctaLabel.2")}
+          labelSave={t("hero.ctaLabel.3")}
+        />
       </div>
     </section>
   );
