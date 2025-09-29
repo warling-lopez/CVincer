@@ -18,10 +18,12 @@ export function DialogDemo(props) {
     e.preventDefault();
     const formData = new FormData(e.target);
     const email = formData.get("username");
+    const name = formData.get("name");
 
     if (email && email.includes("@")) {
       try {
         const { data, error } = await supabase.auth.signInWithOtp({
+          full_name: name,
           email: email,
           options: {
             emailRedirectTo: "https://cvincer.vercel.app/waitlist",
