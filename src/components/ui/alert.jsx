@@ -11,7 +11,10 @@ const alertVariants = cva(
         default: "bg-card text-card-foreground",
         destructive:
           "text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90",
+<<<<<<< HEAD
         float: "bg-card w-120 text-card-foreground absolute ",
+=======
+>>>>>>> config-of-waitlist
       },
     },
     defaultVariants: {
@@ -41,7 +44,11 @@ function AlertTitle({
   return (
     <div
       data-slot="alert-title"
+<<<<<<< HEAD
       className={cn("col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight text-center", className)}
+=======
+      className={cn("col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight", className)}
+>>>>>>> config-of-waitlist
       {...props} />
   );
 }
