@@ -36,7 +36,6 @@ export default function WaitlistCard() {
       }
 
       if (session) {
-        console.log("Usuario autenticado:", session.user);
         setIsRegistered(true);
         setUser(session.user);
       } else {
