@@ -14,14 +14,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "CVicer",
-  description: "AI Powered Resume Builder",
+  title: "CVincer",
+  description: "mejora tu CV y Destaca en el mercado laboral",
 };
 
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="es">
       <head>
         {/* Google Analytics */}
         <Script
