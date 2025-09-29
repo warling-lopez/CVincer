@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { Input } from "@/components/ui/input"
+import { useState, useRef } from "react"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
@@ -11,9 +10,9 @@ import { Upload } from "lucide-react"
 export function AddFile() {
   const [file, setFile] = useState(null)
   const [alert, setAlert] = useState(null) // "error" | "success" | null
+  const fileInputRef = useRef(null)
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files?.[0]
+  const handleFiles = (selectedFile) => {
     if (selectedFile && selectedFile.type === "application/pdf") {
       setFile(selectedFile)
       setAlert("success")
@@ -23,43 +22,60 @@ export function AddFile() {
     }
   }
 
+  const handleDrop = (e) => {
+    e.preventDefault()
+    const droppedFile = e.dataTransfer.files?.[0]
+    handleFiles(droppedFile)
+  }
+
   const handleUpload = () => {
     if (!file) {
-      return (
-        <Alert variant="destructive">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>
-            No se ha seleccionado ningún archivo. Por favor, selecciona un archivo PDF.
-          </AlertDescription>
-        </Alert>
-      )
-      
+      setAlert("error")
+      return
     }
-    // Aquí puedes manejar el upload (ej: enviar a backend o Supabase)
     console.log("Subiendo archivo:", file)
     setAlert("success")
   }
 
   return (
-    <div className="flex flex-col gap-4 p-4 border rounded-xl shadow-sm bg-card max-w-md mx-auto">
-      <Label htmlFor="pdf-file">Sube tu archivo PDF</Label>
-      <Input
-        id="pdf-file"
+    <div className="max-w-md md:max-w-2/3 flex flex-col gap-4 p-4 rounded-md bg-card  mx-6">
+      <Label>Sube tu archivo PDF</Label>
+
+      {/* Drag & Drop area */}
+      <div
+        onDrop={handleDrop}
+        onDragOver={(e) => e.preventDefault()}
+        onClick={() => fileInputRef.current.click()}
+        className="flex w-full flex-col items-center justify-center border-2 py-40 border-dashed border-blue-800/50 rounded-lg cursor-pointer hover:bg-blue-50 transition"
+      >
+        {!file ? (
+          <p className="text-center text-blue-800/40">
+            Arrastra tu PDF aquí o haz clic para seleccionar
+          </p>
+        ) : (
+          <Badge className="bg-blue-100 text-blue-700 border-blue-400">
+            {file.name}
+          </Badge>
+        )}
+      </div>
+
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
         type="file"
         accept="application/pdf"
-        onChange={handleFileChange}
+        onChange={(e) => handleFiles(e.target.files?.[0])}
+        className="hidden"
       />
 
+      {/* Upload button (aparece solo si hay archivo) */}
       {file && (
-        <Badge className="bg-blue-100 text-blue-700 border-blue-400">
-          {file.name}
-        </Badge>
+        <Button onClick={handleUpload} className="flex items-center gap-2">
+          <Upload className="h-4 w-4" /> Subir PDF
+        </Button>
       )}
 
-      <Button onClick={handleUpload} className="flex items-center gap-2">
-        <Upload className="h-4 w-4" /> Subir PDF
-      </Button>
-
+      {/* Alerts */}
       {alert === "error" && (
         <Alert variant="destructive">
           <AlertTitle>Error</AlertTitle>
