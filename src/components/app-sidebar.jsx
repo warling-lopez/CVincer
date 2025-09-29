@@ -112,19 +112,21 @@ const data = {
   navSecondary: [
     {
       title: "Settings",
-      url: "#",
+      url: "dashboard/settings",
       icon: IconSettings,
     },
     {
       title: "Get Help",
-      url: "#",
+      url: "/info/help",
       icon: IconHelp,
     },
+    /*
+    este es para la búsqueda de como hacer cosas con en la app tipo documentación
     {
-      title: "Search",
-      url: "#",
+      title: "Search Ai",
+      url: "/dashboard/search",
       icon: IconSearch,
-    },
+    },*/
   ],
   documents: [
     {
