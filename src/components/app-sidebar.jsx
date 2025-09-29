@@ -55,11 +55,6 @@ const data = {
       url: "#",
       icon: IconFolder,
     },
-    {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
-    },
   ],
   navClouds: [
     {
@@ -112,19 +107,21 @@ const data = {
   navSecondary: [
     {
       title: "Settings",
-      url: "#",
+      url: "dashboard/settings",
       icon: IconSettings,
     },
     {
       title: "Get Help",
-      url: "#",
+      url: "/info/help",
       icon: IconHelp,
     },
+    /*
+    este es para la búsqueda de como hacer cosas con en la app tipo documentación
     {
-      title: "Search",
-      url: "#",
+      title: "Search Ai",
+      url: "/dashboard/search",
       icon: IconSearch,
-    },
+    },*/
   ],
   documents: [
     {
@@ -156,7 +153,7 @@ export function AppSidebar({
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
               <a href="#">
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">CVincer.</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
