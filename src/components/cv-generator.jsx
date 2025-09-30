@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Download, Wand2, Eye, AlertCircle } from "lucide-react";
 
-export function CVGenerator() {
+export default function CVGenerator() {
   const [prompt, setPrompt] = useState("");
   const [cvData, setCvData] = useState(null);
   const [htmlContent, setHtmlContent] = useState("");
@@ -357,12 +357,19 @@ export function CVGenerator() {
     if (!htmlContent) return;
     
     const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Por favor, permite las ventanas emergentes para esta función');
+      return;
+    }
+    
     printWindow.document.write(htmlContent);
     printWindow.document.close();
     
     // Esperar a que se cargue y luego abrir diálogo de impresión
     printWindow.onload = () => {
-      printWindow.print();
+      setTimeout(() => {
+        printWindow.print();
+      }, 250);
     };
   };
 
