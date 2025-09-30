@@ -226,7 +226,7 @@ export function AddFile() {
             <p className="text-sm text-gray-500">Analizando tu CV...</p>
           </div>
         ) : recommendations ? (
-          <div className="space-y-4 overflow-y-auto max-h-full pr-2">
+          <div className="space-y-4  max-h-[800px] bg-scroll overflow-y-auto pr-2">
             {/* Resumen General */}
             {recommendations.resumen_general && (
               <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
