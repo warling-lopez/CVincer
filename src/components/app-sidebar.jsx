@@ -18,6 +18,7 @@ import {
   IconSettings,
   IconUsers,
 } from "@tabler/icons-react"
+import { Wand2 } from "lucide-react"
 
 import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
@@ -48,7 +49,7 @@ const data = {
     {
       title: "Analytics",
       url: "/dashboard/analytics",
-      icon: IconChartBar,
+      icon: Wand2,
     },
     {
       title: "Ofertas",
@@ -125,9 +126,9 @@ const data = {
   ],
   documents: [
     {
-      name: "Data Library",
-      url: "#",
-      icon: IconDatabase,
+      name: "Generador de CVs",
+      url: "/dashboard/cv-generator",
+      icon: IconFileWord,
     },
     {
       name: "Reports",
@@ -151,7 +152,7 @@ export function AppSidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <a href="#">
+              <a href="/dashboard">
                 <IconInnerShadowTop className="!size-5" />
                 <span className="text-base font-semibold">CVincer.</span>
               </a>

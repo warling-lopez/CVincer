@@ -21,7 +21,7 @@ export async function POST(request) {
 
     // 2. Use the openai library to create the chat completion
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // gpt-4o is generally faster and better than gpt-4 for this type of task
+      model: "gpt-5-mini", // gpt-4o is generally faster and better than gpt-4 for this type of task
       // 3. Define clear roles and include the user's prompt
       messages: [
         {
