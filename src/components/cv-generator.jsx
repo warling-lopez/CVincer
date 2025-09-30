@@ -1,12 +1,9 @@
-// src/components/cv-generator.jsx
-"use client";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Download, Wand2, Eye } from "lucide-react";
+import { Download, Wand2, Eye, AlertCircle } from "lucide-react";
 
 export function CVGenerator() {
   const [prompt, setPrompt] = useState("");
@@ -14,43 +11,70 @@ export function CVGenerator() {
   const [htmlContent, setHtmlContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Simular llamada a IA (reemplaza con tu API real)
+  // Generar CV con IA
   const generateCVWithAI = async () => {
+    if (!prompt.trim()) {
+      setError("Por favor, escribe una descripción de tu perfil profesional");
+      return;
+    }
+
     setLoading(true);
+    setError(null);
     
     try {
-      // Aquí llamarías a tu API de IA (OpenAI, Claude, etc.)
       const response = await fetch('/api/generate-cv', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt })
       });
 
-      const data = await response.json();
-      setCvData(data);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
+      }
+
+      const responseData = await response.json();
+      console.log('Respuesta completa de la API:', responseData);
+      
+      // Acceder a los datos del CV anidados bajo la clave 'cv'
+      const cvDataFromApi = responseData.cv;
+
+      if (!cvDataFromApi || typeof cvDataFromApi !== 'object') {
+         throw new Error("Respuesta inválida. No se encontraron datos de CV en el campo 'cv'.");
+      }
+
+      console.log('Datos del CV extraídos:', cvDataFromApi);
+      
+      setCvData(cvDataFromApi);
       
       // Generar HTML del CV
-      const html = generateCVHTML(data);
+      const html = generateCVHTML(cvDataFromApi);
       setHtmlContent(html);
       setShowPreview(true);
+
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error al generar CV');
+      console.error('Error al generar CV:', error);
+      setError(error.message || 'Error al generar el CV. Por favor, inténtalo de nuevo.');
+      setCvData(null);
+      setHtmlContent("");
     } finally {
       setLoading(false);
     }
   };
 
-  // Generar HTML optimizado para PDF
+  // Generar HTML del CV
   const generateCVHTML = (data) => {
+    if (!data) return '';
+
     return `
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${data.nombre} - CV</title>
+  <title>${data.nombre || 'Currículum Vitae'} - CV</title>
   <style>
     * {
       margin: 0;
@@ -59,7 +83,7 @@ export function CVGenerator() {
     }
     
     body {
-      font-family: 'Arial', 'Helvetica', sans-serif;
+      font-family: 'Segoe UI', 'Arial', 'Helvetica', sans-serif;
       line-height: 1.6;
       color: #333;
       background: white;
@@ -82,12 +106,14 @@ export function CVGenerator() {
       font-size: 32px;
       color: #1e40af;
       margin-bottom: 8px;
+      font-weight: 700;
     }
     
     .header .title {
       font-size: 18px;
       color: #64748b;
       margin-bottom: 12px;
+      font-weight: 500;
     }
     
     .contact-info {
@@ -99,13 +125,14 @@ export function CVGenerator() {
     }
     
     .contact-info span {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 5px;
     }
     
     .section {
       margin-bottom: 30px;
+      page-break-inside: avoid;
     }
     
     .section-title {
@@ -116,12 +143,14 @@ export function CVGenerator() {
       margin-bottom: 15px;
       text-transform: uppercase;
       letter-spacing: 1px;
+      font-weight: 700;
     }
     
     .experience-item, .education-item {
       margin-bottom: 20px;
       padding-left: 15px;
       border-left: 3px solid #e2e8f0;
+      page-break-inside: avoid;
     }
     
     .item-header {
@@ -129,11 +158,13 @@ export function CVGenerator() {
       justify-content: space-between;
       align-items: baseline;
       margin-bottom: 5px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     
     .item-title {
       font-size: 16px;
-      font-weight: bold;
+      font-weight: 700;
       color: #1e293b;
     }
     
@@ -141,6 +172,7 @@ export function CVGenerator() {
       font-size: 15px;
       color: #2563eb;
       margin-bottom: 3px;
+      font-weight: 500;
     }
     
     .item-date {
@@ -164,12 +196,6 @@ export function CVGenerator() {
       margin-bottom: 4px;
     }
     
-    .skills-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px;
-    }
-    
     .skill-category {
       margin-bottom: 15px;
     }
@@ -177,7 +203,8 @@ export function CVGenerator() {
     .skill-category h4 {
       font-size: 14px;
       color: #1e40af;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
+      font-weight: 600;
     }
     
     .skill-tags {
@@ -189,10 +216,11 @@ export function CVGenerator() {
     .skill-tag {
       background: #eff6ff;
       color: #1e40af;
-      padding: 4px 12px;
-      border-radius: 12px;
+      padding: 6px 14px;
+      border-radius: 16px;
       font-size: 13px;
       border: 1px solid #dbeafe;
+      font-weight: 500;
     }
     
     .summary {
@@ -214,20 +242,18 @@ export function CVGenerator() {
 </head>
 <body>
   <div class="cv-container">
-    <!-- HEADER -->
     <div class="header">
-      <h1>${data.nombre}</h1>
-      <div class="title">${data.titulo}</div>
+      <h1>${data.nombre || ''}</h1>
+      ${data.titulo ? `<div class="title">${data.titulo}</div>` : ''}
       <div class="contact-info">
-        <span>📧 ${data.email}</span>
-        <span>📱 ${data.telefono}</span>
-        <span>📍 ${data.ubicacion}</span>
+        ${data.email ? `<span>📧 ${data.email}</span>` : ''}
+        ${data.telefono ? `<span>📱 ${data.telefono}</span>` : ''}
+        ${data.ubicacion ? `<span>📍 ${data.ubicacion}</span>` : ''}
         ${data.linkedin ? `<span>💼 ${data.linkedin}</span>` : ''}
         ${data.github ? `<span>💻 ${data.github}</span>` : ''}
       </div>
     </div>
 
-    <!-- RESUMEN PROFESIONAL -->
     ${data.resumen ? `
     <div class="section">
       <h2 class="section-title">Resumen Profesional</h2>
@@ -235,42 +261,42 @@ export function CVGenerator() {
     </div>
     ` : ''}
 
-    <!-- EXPERIENCIA -->
-    ${data.experiencia && data.experiencia.length > 0 ? `
+    ${data.experiencia && Array.isArray(data.experiencia) && data.experiencia.length > 0 ? `
     <div class="section">
       <h2 class="section-title">Experiencia Laboral</h2>
       ${data.experiencia.map(exp => `
         <div class="experience-item">
           <div class="item-header">
             <div>
-              <div class="item-title">${exp.puesto}</div>
-              <div class="item-company">${exp.empresa}</div>
+              ${exp.puesto ? `<div class="item-title">${exp.puesto}</div>` : ''}
+              ${exp.empresa ? `<div class="item-company">${exp.empresa}</div>` : ''}
             </div>
-            <div class="item-date">${exp.periodo}</div>
+            ${exp.periodo ? `<div class="item-date">${exp.periodo}</div>` : ''}
           </div>
+          ${exp.descripcion ? `
           <div class="item-description">
             ${Array.isArray(exp.descripcion) 
               ? `<ul>${exp.descripcion.map(d => `<li>${d}</li>`).join('')}</ul>`
               : `<p>${exp.descripcion}</p>`
             }
           </div>
+          ` : ''}
         </div>
       `).join('')}
     </div>
     ` : ''}
 
-    <!-- EDUCACIÓN -->
-    ${data.educacion && data.educacion.length > 0 ? `
+    ${data.educacion && Array.isArray(data.educacion) && data.educacion.length > 0 ? `
     <div class="section">
       <h2 class="section-title">Educación</h2>
       ${data.educacion.map(edu => `
         <div class="education-item">
           <div class="item-header">
             <div>
-              <div class="item-title">${edu.titulo}</div>
-              <div class="item-company">${edu.institucion}</div>
+              ${edu.titulo ? `<div class="item-title">${edu.titulo}</div>` : ''}
+              ${edu.institucion ? `<div class="item-company">${edu.institucion}</div>` : ''}
             </div>
-            <div class="item-date">${edu.periodo}</div>
+            ${edu.periodo ? `<div class="item-date">${edu.periodo}</div>` : ''}
           </div>
           ${edu.descripcion ? `<div class="item-description">${edu.descripcion}</div>` : ''}
         </div>
@@ -278,30 +304,29 @@ export function CVGenerator() {
     </div>
     ` : ''}
 
-    <!-- HABILIDADES -->
-    ${data.habilidades ? `
+    ${data.habilidades && typeof data.habilidades === 'object' && Object.keys(data.habilidades).length > 0 ? `
     <div class="section">
       <h2 class="section-title">Habilidades</h2>
-      ${Object.keys(data.habilidades).map(categoria => `
+      ${Object.entries(data.habilidades).map(([categoria, skills]) => `
         <div class="skill-category">
           <h4>${categoria}</h4>
           <div class="skill-tags">
-            ${data.habilidades[categoria].map(skill => 
-              `<span class="skill-tag">${skill}</span>`
-            ).join('')}
+            ${Array.isArray(skills) ? 
+              skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('') 
+              : ''
+            }
           </div>
         </div>
       `).join('')}
     </div>
     ` : ''}
 
-    <!-- IDIOMAS -->
-    ${data.idiomas && data.idiomas.length > 0 ? `
+    ${data.idiomas && Array.isArray(data.idiomas) && data.idiomas.length > 0 ? `
     <div class="section">
       <h2 class="section-title">Idiomas</h2>
       <div class="skill-tags">
         ${data.idiomas.map(idioma => 
-          `<span class="skill-tag">${idioma.idioma}: ${idioma.nivel}</span>`
+          `<span class="skill-tag">${idioma.idioma || ''}: ${idioma.nivel || ''}</span>`
         ).join('')}
       </div>
     </div>
@@ -309,65 +334,50 @@ export function CVGenerator() {
   </div>
 </body>
 </html>
-    `;
+    `.trim();
   };
 
-  // Exportar a PDF usando jsPDF
-  const exportToPDF = async () => {
-    const jsPDF = (await import('jspdf')).default;
-    const html2canvas = (await import('html2canvas')).default;
-
-    // Crear un iframe temporal con el HTML
-    const iframe = document.createElement('iframe');
-    iframe.style.position = 'absolute';
-    iframe.style.left = '-9999px';
-    document.body.appendChild(iframe);
-
-    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-    iframeDoc.open();
-    iframeDoc.write(htmlContent);
-    iframeDoc.close();
-
-    // Esperar a que cargue
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const cvContainer = iframeDoc.querySelector('.cv-container');
+  // Descargar como HTML (funciona sin librerías externas)
+  const handleDownloadHTML = () => {
+    if (!htmlContent) return;
     
-    const canvas = await html2canvas(cvContainer, {
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      backgroundColor: '#ffffff'
-    });
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${cvData?.nombre || 'CV'}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-
-    const imgWidth = 210; // A4 width
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  // Abrir en nueva ventana para imprimir como PDF
+  const handlePrintPDF = () => {
+    if (!htmlContent) return;
     
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-    pdf.save(`CV_${cvData?.nombre?.replace(/\s+/g, '_')}.pdf`);
-
-    // Limpiar
-    document.body.removeChild(iframe);
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+    
+    // Esperar a que se cargue y luego abrir diálogo de impresión
+    printWindow.onload = () => {
+      printWindow.print();
+    };
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="bg-card rounded-lg p-6 shadow-sm">
-        <h2 className="text-2xl font-bold mb-4">Generador de CV con IA</h2>
+      <div className="bg-white rounded-lg p-6 shadow-lg border">
+        <h2 className="text-2xl font-bold mb-2 text-gray-800">Generador de CV con IA</h2>
+        <p className="text-sm text-gray-600 mb-4">Describe tu perfil profesional y la IA creará un CV profesional automáticamente</p>
         
         <div className="space-y-4">
           <div>
-            <Label htmlFor="prompt">Describe tu perfil profesional</Label>
+            <Label htmlFor="prompt" className="text-base font-semibold">Tu perfil profesional</Label>
             <Textarea
               id="prompt"
-              placeholder="Ejemplo: Soy desarrollador Full Stack con 5 años de experiencia en React y Node.js. He trabajado en startups tecnológicas desarrollando aplicaciones web escalables. Tengo título en Ingeniería de Software..."
+              placeholder="Ejemplo: Soy desarrollador Full Stack con 5 años de experiencia en React y Node.js. He trabajado en startups tecnológicas desarrollando aplicaciones web escalables. Tengo título en Ingeniería de Software y dominio de JavaScript, TypeScript, PostgreSQL..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               rows={6}
@@ -377,21 +387,42 @@ export function CVGenerator() {
 
           <Button 
             onClick={generateCVWithAI} 
-            disabled={loading || !prompt}
+            disabled={loading || !prompt.trim()}
             className="w-full"
+            size="lg"
           >
             <Wand2 className="h-4 w-4 mr-2" />
-            {loading ? 'Generando CV...' : 'Generar CV con IA'}
+            {loading ? 'Generando CV con IA...' : 'Generar CV con IA'}
           </Button>
         </div>
       </div>
 
-      {showPreview && htmlContent && (
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {cvData && htmlContent && (
         <div className="space-y-4">
-          <div className="flex gap-2">
-            <Button onClick={exportToPDF} className="flex-1">
+          <div className="flex gap-2 flex-wrap">
+            <Button 
+              className="flex-1 min-w-[200px]"
+              onClick={handlePrintPDF}
+              size="lg"
+            >
               <Download className="h-4 w-4 mr-2" />
-              Descargar PDF
+              Descargar PDF (Imprimir)
+            </Button>
+            <Button 
+              variant="outline"
+              className="flex-1 min-w-[200px]"
+              onClick={handleDownloadHTML}
+              size="lg"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Descargar HTML
             </Button>
             <Button 
               variant="outline" 
@@ -403,10 +434,13 @@ export function CVGenerator() {
           </div>
 
           {showPreview && (
-            <div className="bg-card rounded-lg p-6 shadow-sm">
+            <div className="bg-white rounded-lg shadow-lg border overflow-hidden">
+              <div className="bg-gray-50 px-4 py-2 border-b">
+                <p className="text-sm text-gray-600 font-medium">Vista previa del CV</p>
+              </div>
               <iframe
                 srcDoc={htmlContent}
-                className="w-full border rounded"
+                className="w-full border-0"
                 style={{ height: '800px' }}
                 title="CV Preview"
               />
@@ -414,11 +448,19 @@ export function CVGenerator() {
           )}
         </div>
       )}
-
-      {!cvData && !loading && (
+      
+      {!cvData && !loading && !error && (
         <Alert>
           <AlertDescription>
-            💡 Describe tu experiencia, educación, habilidades y la IA generará un CV profesional automáticamente.
+            💡 <strong>Tip:</strong> Describe tu experiencia, educación, habilidades e idiomas. Cuanto más detalles proporciones, mejor será el CV generado.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {cvData && !showPreview && (
+        <Alert className="bg-green-50 border-green-200">
+          <AlertDescription className="text-green-800">
+            ✅ CV generado correctamente. Haz clic en "Ver Vista Previa" para revisarlo o descárgalo directamente.
           </AlertDescription>
         </Alert>
       )}
