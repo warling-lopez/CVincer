@@ -6,6 +6,7 @@ import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 import { AddFile } from "@/components/section-addFile";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { CVGenerator } from "@/components/cv-generator";
 
 export default function Page() {
   return (
@@ -25,6 +26,7 @@ export default function Page() {
             </div>
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
               <AddFile />
+              <CVGenerator />
             </div>
           </div>
         </div>
