@@ -74,7 +74,7 @@ El JSON debe tener esta estructura EXACTA solo el json, sin texto adicional y si
 IMPORTANTE: 
 - Responde SOLO con el JSON, sin texto adicional
 - Si falta información, usa datos de ejemplo realistas
-- Haz el CV lo más profesional y completo posible`,
+- Haz el CV lo más profesional y completo posible con la información dada`,
         },
         {
           role: "user",

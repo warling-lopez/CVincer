@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Download, Wand2, Eye, AlertCircle } from "lucide-react";
 
-export default function CVGenerator() {
+export function CVGenerator() {
   const [prompt, setPrompt] = useState("");
   const [cvData, setCvData] = useState(null);
   const [htmlContent, setHtmlContent] = useState("");
@@ -74,7 +74,7 @@ export default function CVGenerator() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${data.nombre || 'Currículum Vitae'} - CV</title>
+  <title>${data.cv.nombre || 'Currículum Vitae'} - CV</title>
   <style>
     * {
       margin: 0;
@@ -243,28 +243,28 @@ export default function CVGenerator() {
 <body>
   <div class="cv-container">
     <div class="header">
-      <h1>${data.nombre || ''}</h1>
-      ${data.titulo ? `<div class="title">${data.titulo}</div>` : ''}
+      <h1>${data.cv.nombre || ''}</h1>
+      ${data.cv.titulo ? `<div class="title">${data.cv.titulo}</div>` : ''}
       <div class="contact-info">
-        ${data.email ? `<span>📧 ${data.email}</span>` : ''}
-        ${data.telefono ? `<span>📱 ${data.telefono}</span>` : ''}
-        ${data.ubicacion ? `<span>📍 ${data.ubicacion}</span>` : ''}
-        ${data.linkedin ? `<span>💼 ${data.linkedin}</span>` : ''}
-        ${data.github ? `<span>💻 ${data.github}</span>` : ''}
+        ${data.cv.email ? `<span>📧 ${data.cv.email}</span>` : ''}
+        ${data.cv.telefono ? `<span>📱 ${data.cv.telefono}</span>` : ''}
+        ${data.cv.ubicacion ? `<span>📍 ${data.cv.ubicacion}</span>` : ''}
+        ${data.cv.linkedin ? `<span>💼 ${data.cv.linkedin}</span>` : ''}
+        ${data.cv.github ? `<span>💻 ${data.cv.github}</span>` : ''}
       </div>
     </div>
 
-    ${data.resumen ? `
+    ${data.cv.resumen ? `
     <div class="section">
       <h2 class="section-title">Resumen Profesional</h2>
-      <p class="summary">${data.resumen}</p>
+      <p class="summary">${data.cv.resumen}</p>
     </div>
     ` : ''}
 
-    ${data.experiencia && Array.isArray(data.experiencia) && data.experiencia.length > 0 ? `
+    ${data.cv.experiencia && Array.isArray(data.cv.experiencia) && data.cv.experiencia.length > 0 ? `
     <div class="section">
       <h2 class="section-title">Experiencia Laboral</h2>
-      ${data.experiencia.map(exp => `
+      ${data.cv.experiencia.map(exp => `
         <div class="experience-item">
           <div class="item-header">
             <div>
@@ -286,10 +286,10 @@ export default function CVGenerator() {
     </div>
     ` : ''}
 
-    ${data.educacion && Array.isArray(data.educacion) && data.educacion.length > 0 ? `
+    ${data.cv.educacion && Array.isArray(data.cv.educacion) && data.cv.educacion.length > 0 ? `
     <div class="section">
       <h2 class="section-title">Educación</h2>
-      ${data.educacion.map(edu => `
+      ${data.cv.educacion.map(edu => `
         <div class="education-item">
           <div class="item-header">
             <div>
@@ -304,10 +304,10 @@ export default function CVGenerator() {
     </div>
     ` : ''}
 
-    ${data.habilidades && typeof data.habilidades === 'object' && Object.keys(data.habilidades).length > 0 ? `
+    ${data.cv.habilidades && typeof data.cv.habilidades === 'object' && Object.keys(data.cv.habilidades).length > 0 ? `
     <div class="section">
       <h2 class="section-title">Habilidades</h2>
-      ${Object.entries(data.habilidades).map(([categoria, skills]) => `
+      ${Object.entries(data.cv.habilidades).map(([categoria, skills]) => `
         <div class="skill-category">
           <h4>${categoria}</h4>
           <div class="skill-tags">
@@ -321,11 +321,11 @@ export default function CVGenerator() {
     </div>
     ` : ''}
 
-    ${data.idiomas && Array.isArray(data.idiomas) && data.idiomas.length > 0 ? `
+    ${data.cv.idiomas && Array.isArray(data.cv.idiomas) && data.cv.idiomas.length > 0 ? `
     <div class="section">
       <h2 class="section-title">Idiomas</h2>
       <div class="skill-tags">
-        ${data.idiomas.map(idioma => 
+        ${data.cv.idiomas.map(idioma => 
           `<span class="skill-tag">${idioma.idioma || ''}: ${idioma.nivel || ''}</span>`
         ).join('')}
       </div>
