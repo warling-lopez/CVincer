@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button";
+ "use client";
+ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
