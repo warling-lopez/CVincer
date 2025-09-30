@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   IconCamera,
   IconChartBar,
@@ -17,13 +17,13 @@ import {
   IconSearch,
   IconSettings,
   IconUsers,
-} from "@tabler/icons-react"
-import { Wand2 } from "lucide-react"
+} from "@tabler/icons-react";
+import { Wand2 } from "lucide-react";
 
-import { NavDocuments } from "@/components/nav-documents"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavDocuments } from "@/components/nav-documents";
+import { NavMain } from "@/components/nav-main";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -32,11 +32,12 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import supabase from "@/supabase/supabase";
 
 const data = {
   user: {
-    name: "shadcn",
+    name: "Marcos",
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
@@ -141,17 +142,38 @@ const data = {
       icon: IconFileWord,
     },
   ],
-}
+};
 
-export function AppSidebar({
-  ...props
-}) {
+export function AppSidebar({ ...props }) {
+  const [user, setUser] = React.useState(null);
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { User },
+        error,
+      } = await supabase.auth.getUser();
+
+      if (error) {
+        console.error("Error al obtener el usuario:", error.message);
+      } else if (User) {
+        console.log("Usuario actual:", User);
+        setUser(user);
+        // 'user' contiene la información del usuario autenticado
+      } else {
+        console.log("No hay usuario autenticado.");
+      }
+    };
+    fetchUser();
+  }, []);
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
               <a href="/dashboard">
                 <IconInnerShadowTop className="!size-5" />
                 <span className="text-base font-semibold">CVincer.</span>
