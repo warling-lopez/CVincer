@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "CVincer",
+  title: "mejora tu CV y Destaca en el mercado laboral",
   description: "mejora tu CV y Destaca en el mercado laboral",
 };
 

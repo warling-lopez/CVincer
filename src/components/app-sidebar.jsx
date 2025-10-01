@@ -145,26 +145,9 @@ const data = {
 };
 
 export function AppSidebar({ ...props }) {
-  const [user, setUser] = React.useState(null);
-  React.useEffect(() => {
-    const fetchUser = async () => {
-      const {
-        data: { User },
-        error,
-      } = await supabase.auth.getUser();
 
-      if (error) {
-        console.error("Error al obtener el usuario:", error.message);
-      } else if (User) {
-        console.log("Usuario actual:", User);
-        setUser(user);
-        // 'user' contiene la información del usuario autenticado
-      } else {
-        console.log("No hay usuario autenticado.");
-      }
-    };
-    fetchUser();
-  }, []);
+
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -188,7 +171,7 @@ export function AppSidebar({ ...props }) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser/>
       </SidebarFooter>
     </Sidebar>
   );

@@ -24,7 +24,7 @@ const translations = {
       tag: "Transforma Tu CV y Consigue Esa Entrevista",
       title: "Deja de ser invisible. Adapta tu CV y consigue la entrevista.",
       subtitle:
-        "Nuestra IA analiza la oferta laboral y optimiza tu currículum para pasar los filtros ATS y captar la atención de los reclutadores. Menos esfuerzo, más resultados.",
+        "Una IA que analiza la oferta laboral y optimiza tu currículum para captar la atención de los reclutadores. Menos esfuerzo, más resultados.",
       cta: "Optimiza tu CV gratis",
       ctaTitle: "Únete a la lista de espera",
       ctaDescription:
@@ -417,76 +417,7 @@ const redirectToSignUp = () => {};
  * @param {React.ReactNode} props.children - The content of the button.
  */
 
-const Button = ({
-  variant = "primary",
-  size = "md",
-  color = "blue",
-  icon,
-  iconPosition = "left",
-  loading = false,
-  disabled = false,
-  fullWidth = false,
-  onClick,
-  children,
-  ...props
-}) => {
-  const baseClasses =
-    "inline-flex items-center justify-center font-semibold rounded-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2";
 
-  const variantClasses = {
-    primary: {
-      blue: "bg-blue-800 text-white hover:bg-blue-700 focus:ring-blue-500",
-      gold: "bg-amber-500 text-slate-900 hover:bg-amber-400 focus:ring-amber-500",
-    },
-    secondary: {
-      blue: "bg-blue-100 text-blue-800 hover:bg-blue-200 focus:ring-blue-500",
-      gold: "bg-amber-100 text-amber-800 hover:bg-amber-200 focus:ring-amber-500",
-    },
-    outline: {
-      blue: "border border-blue-800 text-blue-800 hover:bg-blue-50 focus:ring-blue-500",
-      gold: "border border-amber-500 text-amber-600 hover:bg-amber-50 focus:ring-amber-500",
-    },
-    ghost: {
-      blue: "text-blue-800 hover:bg-blue-100 focus:ring-blue-500",
-      gold: "text-amber-600 hover:bg-amber-100 focus:ring-amber-500",
-    },
-  };
-
-  const sizeClasses = {
-    sm: "px-3 py-1.5 text-sm",
-    md: "px-4 py-2 text-base",
-    lg: "px-6 py-3 text-lg",
-    xl: "px-8 py-4 text-xl",
-  };
-
-  const isDisabled = loading || disabled;
-
-  const classes = cn(
-    baseClasses,
-    variantClasses[variant][color],
-    sizeClasses[size],
-    fullWidth && "w-full",
-    isDisabled && "opacity-60 cursor-not-allowed"
-  );
-
-  return (
-    <button
-      onClick={onClick}
-      disabled={isDisabled}
-      className={classes}
-      {...props}
-    >
-      {loading && <IconSpinner className="mr-2 h-5 w-5" />}
-      {icon && iconPosition === "left" && !loading && (
-        <span className="mr-2">{icon}</span>
-      )}
-      {children}
-      {icon && iconPosition === "right" && !loading && (
-        <span className="ml-2">{icon}</span>
-      )}
-    </button>
-  );
-};
 
 // --- COMPONENTS/COMMON ---
 const LanguageToggle = () => {
