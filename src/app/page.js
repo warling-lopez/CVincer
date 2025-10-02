@@ -5,20 +5,68 @@ import React, {
   createContext,
   useContext,
   useMemo,
+  useRef,
+  forwardRef,
 } from "react";
-import { DialogDemo } from "@/components/waitList-Form";
-import WaitlistAlert from "@/components/confirm-waitlist";
+import {
+  Upload,
+  BrainCircuit,
+  Wand2,
+  Download,
+  Check,
+  Loader2,
+  X,
+  Target,
+  Zap,
+  Search,
+  Twitter,
+  Linkedin,
+  Github,
+  ChevronRight,
+  User,
+  LogOut,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import supabase from "@/supabase/supabase";
+import { cn } from "@/lib/utils";
 
-// --- UTILS ---
-// Helper for combining Tailwind classes conditionally
-const cn = (...classes) => classes.filter(Boolean).join(" ");
 
-// --- CONSTANTS & TRANSLATIONS ---
+  // ============================================================================
+// 📁 lib/translations.js
+// ============================================================================
+
 const translations = {
   es: {
+    auth: {
+      login: {
+        title: "Iniciar Sesión",
+        email: "Correo Electrónico",
+        password: "Contraseña",
+        submit: "Iniciar Sesión",
+        loading: "Iniciando...",
+        forgot: "¿Olvidaste tu contraseña?",
+        noAccount: "¿No tienes cuenta?",
+        signup: "Regístrate",
+      },
+      signup: {
+        title: "Crear una cuenta",
+        name: "Nombre completo",
+        email: "Correo Electrónico",
+        password: "Contraseña",
+        confirm: "Confirmar Contraseña",
+        terms: "Acepto los Términos y Condiciones",
+        submit: "Crear Cuenta Gratis",
+        loading: "Creando cuenta...",
+        hasAccount: "¿Ya tienes cuenta?",
+        login: "Inicia Sesión",
+      },
+    },
     header: {
       appName: "CVincer",
-      cta: "Empezar ahora",
+      login: "Iniciar Sesión",
+      signup: "Registrarse",
+      dashboard: "Dashboard",
+      logout: "Cerrar Sesión",
     },
     hero: {
       tag: "Transforma Tu CV y Consigue Esa Entrevista",
@@ -26,15 +74,9 @@ const translations = {
       subtitle:
         "Una IA que analiza la oferta laboral y optimiza tu currículum para captar la atención de los reclutadores. Menos esfuerzo, más resultados.",
       cta: "Optimiza tu CV gratis",
-      ctaTitle: "Únete a la lista de espera",
-      ctaDescription:
-        "Sé el primero en acceder a nuestra herramienta de optimización de CV.",
-      ctaLabel: [
-        "Nombre",
-        "Correo Electrónico",
-        "Cancelar",
-        "Unirme a la lista",
-      ],
+      secondaryCta: "Empieza gratis, sin tarjeta de crédito.",
+      socialProof:
+        "Únete a más de 1,000 profesionales que ya optimizaron su CV.",
     },
     problem: {
       title: "El Problema No Eres Tú, Es Cómo Te Presentas",
@@ -44,33 +86,53 @@ const translations = {
         {
           title: "Proceso Manual Ineficiente",
           description:
-            "Adaptar tu CV para cada oferta consume horas y genera dudas. ¿Estaré usando las palabras correctas? ¿Es el formato adecuado?",
+            "Adaptar tu CV para cada oferta consume horas y genera dudas. ¿Estaré usando las palabras correctas?",
         },
         {
-          title: "Brecha de Conocimiento",
+          title: "Brecha de Conocimiento ATS",
           description:
-            "La mayoría de profesionales no saben cómo reescribir sus logros para demostrar impacto real o cómo optimizar para los sistemas de seguimiento (ATS).",
+            "La mayoría no sabe cómo reescribir logros para demostrar impacto o para optimizar para los sistemas de seguimiento (ATS).",
         },
         {
           title: "Falta de Disciplina Sistemática",
           description:
-            "Mantener un CV maestro actualizado y saber qué cortar o resaltar para cada aplicación específica requiere un criterio que solo la práctica constante puede dar.",
+            "Mantener un CV maestro actualizado y saber qué resaltar para cada aplicación requiere un criterio que solo la práctica da.",
         },
       ],
     },
-    solution: {
-      title: "La solución: Tu asistente de carrera personal, impulsado por IA",
-      subtitle:
-        "Analizamos, reescribimos y optimizamos tu CV en segundos, no en horas.",
-      cta: "Ver cómo funciona",
+    howItWorks: {
+      title: "Cómo funciona CVincer",
+      subtitle: "En 4 simples pasos, tendrás un CV listo para destacar.",
+      steps: [
+        {
+          title: "Sube tus Documentos",
+          description:
+            "Carga tu CV actual y pega la descripción de la oferta de trabajo a la que quieres aplicar.",
+        },
+        {
+          title: "Análisis con IA",
+          description:
+            "Nuestra IA identifica las palabras clave, habilidades y requisitos más importantes de la oferta.",
+        },
+        {
+          title: "Optimización Mágica",
+          description:
+            "Reescribimos y adaptamos las secciones clave de tu CV para un match perfecto con el puesto.",
+        },
+        {
+          title: "Descarga y Conquista",
+          description:
+            "Obtén tu nuevo CV optimizado en formato PDF, listo para ser enviado con confianza.",
+        },
+      ],
     },
     features: {
       title: "Funcionalidades diseñadas para darte una ventaja",
       subtitle:
         "Todo lo que necesitas para que tu aplicación destaque del resto.",
       viability: {
-        high: "Alta Viabilidad",
-        medium: "Viabilidad Media",
+        high: "Disponible",
+        medium: "En Beta",
         low: "Próximamente",
       },
       items: [
@@ -83,7 +145,7 @@ const translations = {
         {
           title: "Optimización ATS Instantánea",
           description:
-            "Aumentamos tu puntuación de compatibilidad (match score) para asegurar que pases los filtros automáticos.",
+            "Aumentamos tu puntuación de compatibilidad para asegurar que pases los filtros automáticos.",
           viability: "high",
         },
         {
@@ -112,31 +174,103 @@ const translations = {
         },
       ],
     },
+    pricing: {
+      title: "Planes para cada etapa de tu carrera",
+      subtitle: "Elige el plan que mejor se adapte a tus necesidades.",
+      badge: "Más Popular",
+      plans: [
+        {
+          name: "Gratis",
+          price: "$0",
+          period: "/mes",
+          features: [
+            "3 optimizaciones al mes",
+            "Análisis básico ATS",
+            "Exportación PDF",
+          ],
+          cta: "Comenzar Gratis",
+        },
+        {
+          name: "Pro",
+          price: "$9.99",
+          period: "/mes",
+          features: [
+            "Optimizaciones ilimitadas",
+            "Análisis avanzado ATS",
+            "Múltiples versiones de CV",
+            "Scoring pre-envío",
+            "Plantillas premium",
+          ],
+          cta: "Empezar Prueba Gratis",
+        },
+        {
+          name: "Enterprise",
+          price: "Personalizado",
+          period: "",
+          features: [
+            "Todo lo del plan Pro",
+            "Sincronización LinkedIn",
+            "Soporte prioritario",
+            "Acceso a la API",
+          ],
+          cta: "Contactar Ventas",
+        },
+      ],
+    },
     ctaSection: {
-      title: "¿Listo para recibir más llamadas a entrevistas?",
+      title: "Comienza a optimizar tu CV ahora",
       subtitle:
         "Deja que la inteligencia artificial trabaje por ti. Optimiza tu CV hoy y acércate al trabajo de tus sueños.",
-      cta: "Empezar gratis",
+      cta: "Crear mi cuenta gratis",
     },
     footer: {
-      copy: "© 2024 CVincer. Todos los derechos reservados.",
+      copy: "© 2025 CVincer. Todos los derechos reservados.",
+      terms: "Términos de Servicio",
+      privacy: "Política de Privacidad",
+      contact: "Contacto",
     },
   },
   en: {
+    auth: {
+      login: {
+        title: "Sign In",
+        email: "Email Address",
+        password: "Password",
+        submit: "Sign In",
+        loading: "Signing in...",
+        forgot: "Forgot your password?",
+        noAccount: "Don't have an account?",
+        signup: "Sign Up",
+      },
+      signup: {
+        title: "Create an account",
+        name: "Full Name",
+        email: "Email Address",
+        password: "Password",
+        confirm: "Confirm Password",
+        terms: "I accept the Terms and Conditions",
+        submit: "Create Free Account",
+        loading: "Creating account...",
+        hasAccount: "Already have an account?",
+        login: "Sign In",
+      },
+    },
     header: {
       appName: "CVincer",
-      cta: "Get Started Now",
+      login: "Sign In",
+      signup: "Sign Up",
+      dashboard: "Dashboard",
+      logout: "Log Out",
     },
     hero: {
       tag: "Transform Your CV, Accelerate Your Career",
       title:
-        "Stop being ignored. Tailor your CV with AI and land the interview.",
+        "Stop being invisible. Tailor your CV with AI and land the interview.",
       subtitle:
-        "Our AI analyzes the job offer and optimizes your resume to pass ATS filters and capture recruiters' attention. Less effort, more results.",
+        "Our AI analyzes the job offer and optimizes your resume to capture recruiters' attention. Less effort, more results.",
       cta: "Optimize Your CV for Free",
-      ctaTitle: "Join the Waitlist",
-      ctaDescription: "Be the first to access our CV optimization tool.",
-      ctaLabel: ["Name", "Email", "Cancel", "Join Waitlist"],
+      secondaryCta: "Start free, no credit card required.",
+      socialProof: "Join 1,000+ professionals who already optimized their CV.",
     },
     problem: {
       title: "The problem isn't you, it's how you present yourself",
@@ -146,33 +280,53 @@ const translations = {
         {
           title: "Inefficient Manual Process",
           description:
-            "Tailoring your CV for each offer consumes hours and creates doubt. Am I using the right words? Is the format correct?",
+            "Tailoring your CV for each offer consumes hours and creates doubt. Am I using the right words?",
         },
         {
-          title: "Knowledge Gap",
+          title: "ATS Knowledge Gap",
           description:
-            "Most professionals don't know how to rewrite their achievements to show real impact or how to optimize for Applicant Tracking Systems (ATS).",
+            "Most don't know how to rewrite achievements to show real impact or optimize for Applicant Tracking Systems (ATS).",
         },
         {
           title: "Lack of Systematic Discipline",
           description:
-            "Maintaining an updated master CV and knowing what to cut or highlight for each specific application requires judgment that only constant practice can provide.",
+            "Maintaining an updated master CV and knowing what to highlight for each application requires judgment that only practice provides.",
         },
       ],
     },
-    solution: {
-      title: "The Solution: Your personal career assistant, powered by AI",
-      subtitle:
-        "We analyze, rewrite, and optimize your CV in seconds, not hours.",
-      cta: "See how it works",
+    howItWorks: {
+      title: "How CVincer works",
+      subtitle: "In 4 simple steps, you'll have a CV ready to stand out.",
+      steps: [
+        {
+          title: "Upload Your Documents",
+          description:
+            "Upload your current CV and paste the job description you want to apply for.",
+        },
+        {
+          title: "AI Analysis",
+          description:
+            "Our AI identifies the most important keywords, skills, and requirements from the job offer.",
+        },
+        {
+          title: "Magic Optimization",
+          description:
+            "We rewrite and adapt key sections of your CV for a perfect match with the position.",
+        },
+        {
+          title: "Download and Conquer",
+          description:
+            "Get your new optimized CV in PDF format, ready to be sent with confidence.",
+        },
+      ],
     },
     features: {
       title: "Features designed to give you an edge",
       subtitle:
         "Everything you need to make your application stand out from the rest.",
       viability: {
-        high: "High Viability",
-        medium: "Medium Viability",
+        high: "Available",
+        medium: "In Beta",
         low: "Coming Soon",
       },
       items: [
@@ -214,54 +368,89 @@ const translations = {
         },
       ],
     },
+    pricing: {
+      title: "Plans for every stage of your career",
+      subtitle: "Choose the plan that best fits your needs.",
+      badge: "Most Popular",
+      plans: [
+        {
+          name: "Free",
+          price: "$0",
+          period: "/month",
+          features: [
+            "3 optimizations per month",
+            "Basic ATS analysis",
+            "PDF export",
+          ],
+          cta: "Start Free",
+        },
+        {
+          name: "Pro",
+          price: "$9.99",
+          period: "/month",
+          features: [
+            "Unlimited optimizations",
+            "Advanced ATS analysis",
+            "Multiple CV versions",
+            "Pre-submission scoring",
+            "Premium templates",
+          ],
+          cta: "Start Free Trial",
+        },
+        {
+          name: "Enterprise",
+          price: "Custom",
+          period: "",
+          features: [
+            "Everything in Pro",
+            "LinkedIn synchronization",
+            "Priority support",
+            "API access",
+          ],
+          cta: "Contact Sales",
+        },
+      ],
+    },
     ctaSection: {
-      title: "Ready to get more interview calls?",
+      title: "Start optimizing your CV now",
       subtitle:
         "Let artificial intelligence do the work for you. Optimize your CV today and get closer to your dream job.",
-      cta: "Get Started for Free",
+      cta: "Create my free account",
     },
     footer: {
-      copy: "© 2024 CVincer. All rights reserved.",
+      copy: "© 2025 CVincer. All rights reserved.",
+      terms: "Terms of Service",
+      privacy: "Privacy Policy",
+      contact: "Contact",
     },
   },
 };
 
-// --- HOOKS & CONTEXT ---
+// ============================================================================
+// 📁 contexts/LanguageContext.js
+// ============================================================================
 const LanguageContext = createContext();
 
 const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState("es");
 
-  useEffect(() => {
-    const storedLang = localStorage.getItem("cv-optimizer-lang");
-    if (storedLang && (storedLang === "es" || storedLang === "en")) {
-      setLanguage(storedLang);
-    }
-  }, []);
-
-  const handleSetLanguage = (lang) => {
-    setLanguage(lang);
-    localStorage.setItem("cv-optimizer-lang", lang);
-  };
+  // NOTE: Per requirement, localStorage logic has been removed.
+  // Language state is now held in memory and will reset on refresh.
 
   const t = useMemo(() => {
     return (key) => {
       const keys = key.split(".");
-      let result = translations[language];
+      let result = translations[language] || translations["es"];
       for (const k of keys) {
-        result = result[k];
-        if (!result) {
-          return key;
-        }
+        result = result?.[k];
+        if (!result) return key;
       }
       return result;
     };
   }, [language]);
 
   return (
-    <LanguageContext.Provider
-      value={{ language, setLanguage: handleSetLanguage, t }}
-    >
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
@@ -269,159 +458,164 @@ const LanguageProvider = ({ children }) => {
 
 const useLanguage = () => useContext(LanguageContext);
 
-// --- ICONS (inlined react-icons) ---
-const IconSpinner = ({ className }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={cn("animate-spin", className)}
-  >
-    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-  </svg>
+// ============================================================================
+// 📁 components/ui/Button.jsx (Inspired by shadcn/ui)
+// ============================================================================
+const buttonVariants = {
+  base: "inline-flex items-center justify-center rounded-md text-sm font-semibold ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  variants: {
+    variant: {
+      primary: "bg-blue-800 text-white hover:bg-blue-800/90 shadow-lg",
+      secondary: "bg-amber-400 text-blue-900 hover:bg-amber-400/90",
+      outline:
+        "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+      ghost: "hover:bg-accent hover:text-accent-foreground",
+      link: "text-primary underline-offset-4 hover:underline",
+    },
+    size: {
+      md: "h-10 px-4 py-2",
+      lg: "h-12 px-8 rounded-lg text-base",
+      cta: "h-14 px-10 rounded-lg text-lg",
+      icon: "h-10 w-10",
+    },
+  },
+};
+
+const Button = forwardRef(
+  (
+    {
+      className,
+      variant = "primary",
+      size = "md",
+      loading = false,
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <button
+        className={cn(
+          buttonVariants.base,
+          buttonVariants.variants.variant[variant],
+          buttonVariants.variants.size[size],
+          className
+        )}
+        ref={ref}
+        disabled={loading}
+        {...props}
+      >
+        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+        {children}
+      </button>
+    );
+  }
+);
+Button.displayName = "Button";
+
+// ============================================================================
+// 📁 components/ui/Input.jsx & Label.jsx
+// ============================================================================
+const Input = forwardRef(({ className, type, ...props }, ref) => (
+  <input
+    type={type}
+    className={cn(
+      "flex h-10 w-full rounded-md border border-slate-300 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+      className
+    )}
+    ref={ref}
+    {...props}
+  />
+));
+Input.displayName = "Input";
+
+const Label = forwardRef(({ className, ...props }, ref) => (
+  <label
+    ref={ref}
+    className={cn(
+      "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+      className
+    )}
+    {...props}
+  />
+));
+Label.displayName = "Label";
+
+// ============================================================================
+// 📁 components/ui/Card.jsx (Inspired by shadcn/ui)
+// ============================================================================
+const Card = ({ className, ...props }) => (
+  <div
+    className={cn(
+      "rounded-xl border bg-white text-card-foreground shadow-lg transition-all",
+      className
+    )}
+    {...props}
+  />
+);
+const CardHeader = ({ className, ...props }) => (
+  <div className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />
+);
+const CardTitle = ({ className, ...props }) => (
+  <h3
+    className={cn(
+      "text-2xl font-semibold leading-none tracking-tight",
+      className
+    )}
+    {...props}
+  />
+);
+const CardDescription = ({ className, ...props }) => (
+  <p className={cn("text-sm text-muted-foreground", className)} {...props} />
+);
+const CardContent = ({ className, ...props }) => (
+  <div className={cn("p-6 pt-0", className)} {...props} />
 );
 
-const FlagES = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 3 2"
-    width="24"
-    height="16"
-  >
-    <path fill="#C60B1E" d="M0 0h3v2H0z" />
-    <path fill="#FFC400" d="M0 .5h3v1H0z" />
-  </svg>
-);
-
-const FlagGB = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 60 30"
-    width="24"
-    height="12"
-  >
-    <clipPath id="a">
-      <path d="M0 0v30h60V0z" />
-    </clipPath>
-    <clipPath id="b">
-      <path d="M30 15h30v15zv15H0zH0V0h30z" />
-    </clipPath>
-    <g clipPath="url(#a)">
-      <path d="M0 0v30h60V0z" fill="#012169" />
-      <path d="M0 0l60 30m0-30L0 30" stroke="#fff" strokeWidth="6" />
-      <path
-        d="M0 0l60 30m0-30L0 30"
-        clipPath="url(#b)"
-        stroke="#C8102E"
-        strokeWidth="4"
-      />
-      <path d="M30 0v30M0 15h60" stroke="#fff" strokeWidth="10" />
-      <path d="M30 0v30M0 15h60" stroke="#C8102E" strokeWidth="6" />
-    </g>
-  </svg>
-);
-
-const CheckCircleIcon = ({ className }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-    <polyline points="22 4 12 14.01 9 11.01" />
-  </svg>
-);
-
-const ZapIcon = ({ className }) => (
-  <svg
-    key="hi"
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-  </svg>
-);
-
-const SearchIcon = ({ className }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-);
-
-const TargetIcon = ({ className }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <circle cx="12" cy="12" r="10" />
-    <circle cx="12" cy="12" r="6" />
-    <circle cx="12" cy="12" r="2" />
-  </svg>
-);
-
-const redirectToSignUp = () => {};
-// --- COMPONENTS/UI ---
-/**
- * Button Component (mimics shadcn/ui)
- * @param {object} props
- * @param {'primary'|'secondary'|'outline'|'ghost'} [props.variant='primary'] - The variant of the button.
- * @param {'sm'|'md'|'lg'|'xl'} [props.size='md'] - The size of the button.
- * @param {'blue'|'gold'} [props.color='blue'] - The color scheme of the button.
- * @param {React.ReactNode} [props.icon] - Icon element to display.
- * @param {'left'|'right'} [props.iconPosition='left'] - Position of the icon.
- * @param {boolean} [props.loading=false] - If true, shows a loading spinner.
- * @param {boolean} [props.disabled=false] - If true, disables the button.
- * @param {boolean} [props.fullWidth=false] - If true, the button takes up the full width of its container.
- * @param {function} [props.onClick] - Click event handler.
- * @param {React.ReactNode} props.children - The content of the button.
- */
-
-
-
-// --- COMPONENTS/COMMON ---
+// ============================================================================
+// 📁 components/common/LanguageToggle.jsx
+// ============================================================================
 const LanguageToggle = () => {
   const { language, setLanguage } = useLanguage();
+
+  const FlagES = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 3 2"
+      width="24"
+      height="16"
+    >
+      <path fill="#C60B1E" d="M0 0h3v2H0z" />
+      <path fill="#FFC400" d="M0 .5h3v1H0z" />
+    </svg>
+  );
+  const FlagGB = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 60 30"
+      width="24"
+      height="12"
+    >
+      <clipPath id="a">
+        <path d="M0 0v30h60V0z" />
+      </clipPath>
+      <clipPath id="b">
+        <path d="M30 15h30v15zv15H0zH0V0h30z" />
+      </clipPath>
+      <g clipPath="url(#a)">
+        <path d="M0 0v30h60V0z" fill="#012169" />
+        <path d="M0 0l60 30m0-30L0 30" stroke="#fff" strokeWidth="6" />
+        <path
+          d="M0 0l60 30m0-30L0 30"
+          clipPath="url(#b)"
+          stroke="#C8102E"
+          strokeWidth="4"
+        />
+        <path d="M30 0v30M0 15h60" stroke="#fff" strokeWidth="10" />
+        <path d="M30 0v30M0 15h60" stroke="#C8102E" strokeWidth="6" />
+      </g>
+    </svg>
+  );
 
   return (
     <div className="flex items-center space-x-2 rounded-full border border-slate-200 p-1">
@@ -449,76 +643,90 @@ const LanguageToggle = () => {
   );
 };
 
+// ============================================================================
+// 📁 components/common/Header.jsx
+// ============================================================================
 const Header = () => {
   const { t } = useLanguage();
+  const openLogin = () => {
+    // Logic to open login modal
+    router.push("/log");
+  };
   return (
-    <header className="sticky top-0 bg-white/80 backdrop-blur-lg z-50 border-b border-slate-200">
+    <header className="sticky top-0 bg-white/80 backdrop-blur-lg z-40 border-b border-slate-200/80">
       <div className="container mx-auto px-6 py-3 flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <TargetIcon className="h-8 w-8 text-blue-800" />
+        <a href="#" className="flex items-center space-x-2">
+          <Target className="h-8 w-8 text-blue-800" />
           <span className="font-bold text-xl text-slate-900">
             {t("header.appName")}
           </span>
-        </div>
+        </a>
         <div className="flex items-center space-x-4">
           <LanguageToggle />
-          <DialogDemo
-            variant="primary"
-            text={t("header.cta")}
-            title={t("hero.ctaTitle")}
-            desc={t("hero.ctaDescription")}
-            labelName={t("hero.ctaLabel.0")}
-            labelMail={t("hero.ctaLabel.1")}
-            labelCancel={t("hero.ctaLabel.2")}
-            labelSave={t("hero.ctaLabel.3")}
-          />
+
+          <Button variant="ghost" size="md" onClick={openLogin}>
+            {t("header.login")}
+          </Button>
+          <Button variant="primary" size="md" onClick={openLogin}>
+            {t("header.signup")}
+          </Button>
         </div>
       </div>
     </header>
   );
 };
 
-// --- COMPONENTS/SECTIONS ---
+// ============================================================================
+// 📁 components/sections/Hero.jsx
+// ============================================================================
 const Hero = () => {
   const { t } = useLanguage();
+  const router = useRouter();
+  const openSignup = () => {
+    // Logic to open signup modal
+    router.push("/log");
+  };
   return (
-    <section className="bg-slate-50">
-      <WaitlistAlert />
-      <div className="container mx-auto px-6 py-20 lg:py-32 text-center">
+    <section className="bg-slate-50 relative overflow-hidden">
+      <div className="absolute inset-0 bg-grid-slate-200 [mask-image:linear-gradient(to_bottom,white,transparent)]"></div>
+      <div className="container mx-auto px-6 py-20 lg:py-32 text-center relative z-10">
         <span className="inline-block bg-amber-400 text-slate-800 text-sm font-semibold px-4 py-1 rounded-full mb-4">
           {t("hero.tag")}
         </span>
-        <h1 className="text-3xl lg:text-7xl  font-extrabold text-blue-900 leading-tight mb-6 max-w-4xl mx-auto">
+        <h1 className="text-4xl lg:text-7xl font-extrabold text-blue-900 leading-tight mb-6 max-w-4xl mx-auto">
           {t("hero.title")}
         </h1>
-        <br />
-        <p className="text-sm lg:text-xl text-slate-600 mb-10 max-w-3xl mx-auto">
+        <p className="text-lg lg:text-xl text-slate-600 mb-10 max-w-3xl mx-auto">
           {t("hero.subtitle")}
         </p>
-        <DialogDemo
-          variant="primary"
-          size="cta"
-          text={t("hero.cta")}
-          title={t("hero.ctaTitle")}
-          desc={t("hero.ctaDescription")}
-          labelName={t("hero.ctaLabel.0")}
-          labelMail={t("hero.ctaLabel.1")}
-          labelCancel={t("hero.ctaLabel.2")}
-          labelSave={t("hero.ctaLabel.3")}
-        />
+        <div className="flex flex-col items-center space-y-4">
+          <Button
+            size="cta"
+            onClick={openSignup}
+            className="shadow-2xl shadow-blue-800/40"
+          >
+            {t("hero.cta")}
+          </Button>
+          <p className="text-sm text-slate-500">{t("hero.secondaryCta")}</p>
+          <p className="text-sm font-semibold text-slate-600 pt-4">
+            {t("hero.socialProof")}
+          </p>
+        </div>
       </div>
     </section>
   );
 };
 
+// ============================================================================
+// 📁 components/sections/ProblemStatement.jsx
+// ============================================================================
 const ProblemStatement = () => {
   const { t } = useLanguage();
   const problems = t("problem.cards");
-
   const icons = [
-    <ZapIcon key="zap" className="h-8 w-8 text-blue-800" />,
-    <SearchIcon key="search" className="h-8 w-8 text-blue-800" />,
-    <TargetIcon key="target" className="h-8 w-8 text-blue-800" />,
+    <Zap key="zap" className="h-8 w-8 text-blue-800" />,
+    <Search key="search" className="h-8 w-8 text-blue-800" />,
+    <Target key="target" className="h-8 w-8 text-blue-800" />,
   ];
 
   return (
@@ -553,10 +761,52 @@ const ProblemStatement = () => {
   );
 };
 
+// ============================================================================
+// 📁 components/sections/HowItWorks.jsx (NUEVA SECCIÓN)
+// ============================================================================
+const HowItWorks = () => {
+  const { t } = useLanguage();
+  const steps = t("howItWorks.steps");
+  const icons = [
+    <Upload key="1" className="h-10 w-10 text-blue-800" />,
+    <BrainCircuit key="2" className="h-10 w-10 text-blue-800" />,
+    <Wand2 key="3" className="h-10 w-10 text-blue-800" />,
+    <Download key="4" className="h-10 w-10 text-blue-800" />,
+  ];
+
+  return (
+    <section className="py-20 lg:py-28 bg-slate-50">
+      <div className="container mx-auto px-6">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
+            {t("howItWorks.title")}
+          </h2>
+          <p className="text-lg text-slate-600">{t("howItWorks.subtitle")}</p>
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+          {steps.map((step, index) => (
+            <div key={index} className="flex flex-col items-center text-center">
+              <div className="flex items-center justify-center h-24 w-24 rounded-full bg-blue-100 border-8 border-white shadow-md mb-6">
+                {icons[index]}
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">
+                {step.title}
+              </h3>
+              <p className="text-slate-600">{step.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ============================================================================
+// 📁 components/sections/Features.jsx
+// ============================================================================
 const Features = () => {
   const { t } = useLanguage();
   const features = t("features.items");
-
   const viabilityClasses = {
     high: "bg-green-100 text-green-800 border-green-200",
     medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -569,7 +819,7 @@ const Features = () => {
   };
 
   return (
-    <section className="py-20 lg:py-28 bg-slate-50">
+    <section className="py-20 lg:py-28 bg-white">
       <div className="container mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
@@ -581,7 +831,7 @@ const Features = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col"
+              className="bg-white p-6 rounded-lg border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
             >
               <div className="flex-grow">
                 <h3 className="text-xl font-bold text-slate-900 mb-2">
@@ -607,10 +857,83 @@ const Features = () => {
   );
 };
 
+// ============================================================================
+// 📁 components/sections/Pricing.jsx (NUEVA SECCIÓN)
+// ============================================================================
+const Pricing = () => {
+  const { t } = useLanguage();
+  const plans = t("pricing.plans");
+
+  return (
+    <section className="py-20 lg:py-28 bg-slate-50">
+      <div className="container mx-auto px-6">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
+            {t("pricing.title")}
+          </h2>
+          <p className="text-lg text-slate-600">{t("pricing.subtitle")}</p>
+        </div>
+        <div className="grid lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {plans.map((plan, index) => (
+            <Card
+              key={plan.name}
+              className={cn(
+                "flex flex-col",
+                plan.name === "Pro"
+                  ? "border-2 border-blue-800 relative shadow-blue-800/10"
+                  : ""
+              )}
+            >
+              {plan.name === "Pro" && (
+                <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-blue-800 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  {t("pricing.badge")}
+                </div>
+              )}
+              <CardHeader>
+                <CardTitle className="text-blue-900">{plan.name}</CardTitle>
+                <CardDescription>
+                  <span className="text-4xl font-bold text-slate-900">
+                    {plan.price}
+                  </span>
+                  <span className="text-slate-500">{plan.period}</span>
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow flex flex-col">
+                <ul className="space-y-3 text-slate-600 mb-8 flex-grow">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-center">
+                      <Check className="h-4 w-4 mr-3 text-green-500" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  variant={plan.name === "Pro" ? "primary" : "outline"}
+                  className="w-full"
+                >
+                  {plan.cta}
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ============================================================================
+// 📁 components/sections/CtaSection.jsx
+// ============================================================================
 const CtaSection = () => {
   const { t } = useLanguage();
+  const router = useRouter();
+  const openSignup = () => {
+    // Logic to open signup modal
+    router.push("/log");
+  };
   return (
-    <section className="bg-chart-3">
+    <section className="bg-blue-800">
       <div className="container mx-auto px-6 py-20 lg:py-24 text-center">
         <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4 max-w-2xl mx-auto">
           {t("ctaSection.title")}
@@ -618,43 +941,107 @@ const CtaSection = () => {
         <p className="text-lg text-blue-200 mb-8 max-w-3xl mx-auto">
           {t("ctaSection.subtitle")}
         </p>
-        <DialogDemo
-          variant="secondary"
-          size="cta"
-          text={t("header.cta")}
-          title={t("hero.ctaTitle")}
-          desc={t("hero.ctaDescription")}
-          labelName={t("hero.ctaLabel.0")}
-          labelMail={t("hero.ctaLabel.1")}
-          labelCancel={t("hero.ctaLabel.2")}
-          labelSave={t("hero.ctaLabel.3")}
-        />
+        <Button size="cta" variant="secondary" onClick={openSignup}>
+          {t("ctaSection.cta")}
+        </Button>
       </div>
     </section>
   );
 };
 
+// ============================================================================
+// 📁 components/common/Footer.jsx
+// ============================================================================
 const Footer = () => {
   const { t } = useLanguage();
   return (
-    <footer className="bg-foreground text-muted-foreground">
-      <div className="container mx-auto px-6 py-2 text-center">
-        <p>{t("footer.copy")}</p>
+    <footer className="bg-slate-900 text-slate-400">
+      <div className="container mx-auto px-6 py-8">
+        <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+          <div className="flex items-center space-x-2">
+            <Target className="h-6 w-6 text-white" />
+            <span className="font-semibold text-white">
+              {t("header.appName")}
+            </span>
+          </div>
+          <div className="flex space-x-6 text-sm">
+            <a href="#" className="hover:text-white transition-colors">
+              {t("footer.terms")}
+            </a>
+            <a href="#" className="hover:text-white transition-colors">
+              {t("footer.privacy")}
+            </a>
+            <a href="#" className="hover:text-white transition-colors">
+              {t("footer.contact")}
+            </a>
+          </div>
+          <div className="flex space-x-6">
+            <a
+              href="#"
+              aria-label="Twitter"
+              className="hover:text-white transition-colors"
+            >
+              <Twitter className="h-5 w-5" />
+            </a>
+            <a
+              href="#"
+              aria-label="LinkedIn"
+              className="hover:text-white transition-colors"
+            >
+              <Linkedin className="h-5 w-5" />
+            </a>
+            <a
+              href="#"
+              aria-label="GitHub"
+              className="hover:text-white transition-colors"
+            >
+              <Github className="h-5 w-5" />
+            </a>
+          </div>
+        </div>
+        <div className="text-center text-sm mt-8 border-t border-slate-800 pt-6">
+          <p>{t("footer.copy")}</p>
+        </div>
       </div>
     </footer>
   );
 };
 
-// --- App.jsx ---
+// ============================================================================
+// 📁 App.jsx (Punto de entrada principal)
+// ============================================================================
 export default function App() {
+  const router = useRouter();
+  useEffect(() => {
+    try {
+      const authToken = localStorage.getItem("sb-bockeheqvteruvwulvhn-auth-token");
+
+      if (authToken) {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      console.error("Error checking localStorage auth:", error);
+    }
+  }, [router]);
   return (
     <LanguageProvider>
-      <div className="bg-white font-sans">
+      {/* SEO & Meta Tags (Implementation comment)
+            To implement SEO, you would use a library like 'react-helmet' or Next.js's <Head> component here.
+            Example:
+            <Helmet>
+              <title>CVincer | Optimiza tu CV con IA para conseguir más entrevistas</title>
+              <meta name="description" content="Una IA que analiza la oferta laboral y optimiza tu currículum para captar la atención de los reclutadores." />
+              <meta property="og:title" content="CVincer | Optimiza tu CV con IA" />
+            </Helmet>
+          */}
+      <div className="bg-white font-sans text-slate-800">
         <Header />
         <main>
           <Hero />
           <ProblemStatement />
+          <HowItWorks />
           <Features />
+          <Pricing />
           <CtaSection />
         </main>
         <Footer />
