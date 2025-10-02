@@ -84,6 +84,7 @@ export function LoginForm({ className, ...props }) {
                 name="email"
                 type="email"
                 placeholder="m@example.com"
+                className="py-5"
                 required
               />
             </div>
