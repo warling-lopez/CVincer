@@ -29,7 +29,7 @@ export function Recommendations({ user }) {
         .single();
 
       if (error) {
-        console.error("Error obteniendo última recomendación:", error);
+        console.log("Error obteniendo última recomendación:", error);
         setSource(null);
       } else {
         setSource(data);
@@ -236,7 +236,7 @@ export function Recommendations({ user }) {
 
   if (!source || !source.recomendaciones) {
     return (
-      <Card  className="border-2 border-dashed h-[70vh]">
+      <Card className="border-2 border-dashed mx-6 h-[70vh]">
         <CardContent className="flex flex-col items-center justify-center h-full py-12">
           <Target className="w-12 h-12 text-gray-400 mb-4" />
           <p className="text-gray-600 text-center">
