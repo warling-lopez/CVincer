@@ -26,7 +26,7 @@ export async function assignFreePlanIfNew(userId) {
         user_id: userId,
         plan_type: "free",
         plan_name: "Free Plan",
-        credits: 1000,
+        credits: 60,
         months_free: 0,
         status: "active",
       },

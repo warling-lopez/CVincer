@@ -51,7 +51,7 @@ export default function SourcePopup({ user }) {
     try {
       if (option === "hard_dev") {
         // Asigna el plan Hard Devs al usuario
-        const { error } = await supabase.from("plans").insert([
+        const { error } = await supabase.from("plans").update([
           {
             user_id: user.id,
             plan_type: "temporal",
