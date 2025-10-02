@@ -1,12 +1,8 @@
 "use client";
 import { AppSidebar } from "@/components/app-sidebar";
-import { ChartAreaInteractive } from "@/components/chart-area-interactive";
-import { DataTable } from "@/components/data-table";
-import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 import { AddFile } from "@/components/section-addFile";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { CVGenerator } from "@/components/cv-generator";
 import supabase from "@/supabase/supabase";
 import { useEffect, useState } from "react";
 export default function Page() {

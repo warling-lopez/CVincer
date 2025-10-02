@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Upload, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation"; // para redirección
+import supabase from "@/supabase/supabase";
 
 // Importación dinámica del PdfViewer (sin SSR)
 const PdfViewer = dynamic(
@@ -14,7 +16,7 @@ const PdfViewer = dynamic(
   { ssr: false }
 );
 
-export function AddFile() {
+export function AddFile({user}) {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [alert, setAlert] = useState(null); // "error" | "success" | null
@@ -24,6 +26,7 @@ export function AddFile() {
   const [isLoadingRecommendations, setIsLoadingRecommendations] =
     useState(false);
   const fileInputRef = useRef(null);
+  const router = useRouter();
 
   // Función para extraer texto del PDF
   const extractTextFromPDF = async (pdfFile) => {
@@ -120,17 +123,52 @@ export function AddFile() {
     handleFiles(droppedFile);
   };
 
-  const handleUpload = async() => {
+  const handleUpload = async () => {
     if (!file || !pdfText) {
       setAlert("error");
       return;
     }
-    console.log("Subiendo archivo:", file);
-    console.log("Texto extraído:", pdfText);
 
-    // Enviar el texto a la API
-    await recomendaciones(pdfText);
-    setAlert("success");
+    if (!user) {
+      console.error("No hay usuario logueado");
+      setAlert("error");
+      return;
+    }
+
+    try {
+      // 1. Obtener los créditos actuales
+      const { data: planData, error: planError } = await supabase
+        .from("plans")
+        .select("credits, id")
+        .eq("user_id", user.id)
+        .eq("status", "active")
+        .limit(1)
+        .single();
+
+      if (planError) throw planError;
+
+      if (!planData || planData.credits < 15) {
+        // No hay créditos suficientes
+        router.push("/dashboard/buy-credits");
+        return;
+      }
+
+      // 2. Descontar 15 créditos
+      const { error: updateError } = await supabase
+        .from("plans")
+        .update({ credits: planData.credits - 15 })
+        .eq("id", planData.id);
+
+      if (updateError) throw updateError;
+
+      // 3. Procesar el PDF (recomendaciones)
+      await recomendaciones(pdfText);
+      setAlert("success");
+      console.log("Archivo procesado y créditos descontados");
+    } catch (err) {
+      console.error("Error al procesar el archivo:", err);
+      setAlert("error");
+    }
   };
 
   return (
