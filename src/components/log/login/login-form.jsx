@@ -45,7 +45,7 @@ export function LoginForm({ className, ...props }) {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: "http://localhost:3000/dashboard",
+          redirectTo: "https://cvincer.com/dashboard",
         },
       });
       if (error) {
