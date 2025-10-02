@@ -1023,7 +1023,7 @@ export default function App() {
     } catch (error) {
       console.error("Error checking localStorage auth:", error);
     }
-  }, [router]);
+  }, []);
   return (
     <LanguageProvider>
       {/* SEO & Meta Tags (Implementation comment)

@@ -76,7 +76,6 @@ export default function DashboardPage() {
 
     return () => {
       isMounted = false;
-      supabase.removeSubscription(subscription);
     };
   }, []);
 
