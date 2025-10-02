@@ -25,10 +25,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function NavUser(props) {
   const { isMobile } = useSidebar();
   const [user, setUser] = useState({});
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUser = () => {
@@ -37,6 +39,7 @@ export function NavUser(props) {
       );
       if (!session) {
         console.log("No session found");
+        router.push("/log");
       } else {
         const data = JSON.parse(session).user;
         setUser(data);
