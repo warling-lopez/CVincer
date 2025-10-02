@@ -63,20 +63,6 @@ export default function DashboardPage() {
           console.error("Error asignando plan FREE:", insertError);
         }
       }
-      // Fetch la última recomendación únicamente
-      const { data: recs, error: recError } = await supabase
-        .from("user_sources")
-        .select("recomendaciones")
-        .eq("user_id", currentUser.id)
-        .order("created_at", { ascending: false })
-        .limit(1);
-
-      if (recError) {
-        console.error("Error obteniendo user_sources:", recError);
-      }
-      console.log("Última recomendación obtenida:", recs);
-      setRecommendations(recs);
-
     };
 
     init();
@@ -94,6 +80,26 @@ export default function DashboardPage() {
     };
   }, []);
 
+  useEffect(() => {
+    // Fetch la última recomendación únicamente
+    if (!user) return;
+    const currentUser = user;
+    const fetchRecommendations = async () => {
+      const { data: recs, error: recError } = await supabase
+        .from("user_sources")
+        .select("recomendaciones")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      if (recError) {
+        console.error("Error obteniendo user_sources:", recError);
+      }
+      console.log("Última recomendación obtenida:", recs);
+      setRecommendations(recs);
+    };
+    fetchRecommendations();
+  }, []);
   return (
     <SidebarProvider
       style={{
@@ -113,7 +119,7 @@ export default function DashboardPage() {
             {user && <SourcePopup user={user} />}
 
             {/* Pasamos los user_sources al componente de recomendaciones */}
-            <Recommendations user={user} sources={recommendations} />
+            <Recommendations user={user} recomendaciones={[recommendations]} />
           </div>
         </div>
       </SidebarInset>

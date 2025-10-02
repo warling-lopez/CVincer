@@ -159,6 +159,7 @@ export function AddFile({ user }) {
       if (updateError) throw updateError;
 
       // Generar recomendaciones
+      console.log("Generando recomendaciones...", pdfText);
       const recs = await recomendaciones(pdfText);
       const recsJson = recs || {}; // asegura JSON válido
 
