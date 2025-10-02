@@ -2,8 +2,9 @@
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import { Coins } from "lucide-react";
 
-export function SiteHeader() {
+export function SiteHeader({user}) {
   return (
     <header
       className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
@@ -13,11 +14,9 @@ export function SiteHeader() {
         <h1 className="text-base font-medium">Dashboard</h1>
         <div className="ml-auto flex items-center gap-2">
           <Button variant="ghost" asChild size="sm" className="border rounded-2xl">
-            <a
-              href="https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(examples)/dashboard"
-              rel="noopener noreferrer"
-              className="dark:text-foreground">
-              GitHub
+            <a href="/dashboard/buy-credits">
+              <Coins className="mr-2 size-4" />
+              <span className="font-mono tabular-nums">0</span>
             </a>
           </Button>
         </div>
