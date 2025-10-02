@@ -8,6 +8,7 @@ import { AddFile } from "@/components/section-addFile";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { CVGenerator } from "@/components/cv-generator";
 import supabase from "@/supabase/supabase";
+import { useEffect, useState } from "react";
 
 export default function Page() {
   const [user, setUser] = useState(null);
