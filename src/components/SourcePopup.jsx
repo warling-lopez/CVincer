@@ -56,8 +56,8 @@ export default function SourcePopup({ user }) {
             user_id: user.id,
             plan_type: "temporal",
             plan_name: "Hard Devs",
-            credits: 100,
-            week_free: 3,
+            credits: 1000,
+            week_free: 7,
             status: "active",
           },
         ]);
