@@ -1,7 +1,7 @@
 // src/components/section-addFile.jsx
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Upload, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation"; // para redirección
 import supabase from "@/supabase/supabase";
+import { usePlanRealtime } from "@/hooks/usePlanRealtime";
 
 // Importación dinámica del PdfViewer (sin SSR)
 const PdfViewer = dynamic(
@@ -16,7 +17,9 @@ const PdfViewer = dynamic(
   { ssr: false }
 );
 
-export function AddFile({user}) {
+export function AddFile({ user }) {
+  const plan = usePlanRealtime(user?.id);
+
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [alert, setAlert] = useState(null); // "error" | "success" | null
@@ -27,6 +30,21 @@ export function AddFile({user}) {
     useState(false);
   const fileInputRef = useRef(null);
   const router = useRouter();
+
+  // Cargar recomendaciones al iniciar
+  useEffect(() => {
+    const saved = localStorage.getItem("recommendations");
+    if (saved) {
+      setRecommendations(JSON.parse(saved));
+    }
+  }, []);
+
+  // Guardar recomendaciones cuando cambien
+  useEffect(() => {
+    if (recommendations) {
+      localStorage.setItem("recommendations", JSON.stringify(recommendations));
+    }
+  }, [recommendations]);
 
   // Función para extraer texto del PDF
   const extractTextFromPDF = async (pdfFile) => {
@@ -76,42 +94,6 @@ export function AddFile({user}) {
     }
   };
 
-  const recomendaciones = async (info) => {
-    setIsLoadingRecommendations(true);
-    try {
-      const response = await fetch("/api/match-offert", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ info }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error fetching recomendaciones:", errorData);
-        setAlert("error");
-        setIsLoadingRecommendations(false);
-        return;
-      }
-
-      const result = await response.json();
-      console.log("Recomendaciones:", result);
-
-      if (result.success && result.data) {
-        setRecommendations(result.data);
-      } else {
-        console.error("Respuesta sin éxito:", result);
-        setAlert("error");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      setAlert("error");
-    } finally {
-      setIsLoadingRecommendations(false);
-    }
-  };
-
   const handlePreviewGenerated = (dataUrl) => {
     setPreview(dataUrl);
     setIsProcessing(false);
@@ -122,49 +104,79 @@ export function AddFile({user}) {
     const droppedFile = e.dataTransfer.files?.[0];
     handleFiles(droppedFile);
   };
+  const recomendaciones = async (info) => {
+    setIsLoadingRecommendations(true);
+    try {
+      const response = await fetch("/api/match-offert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ info }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error fetching recomendaciones:", errorData);
+        setAlert("error");
+        return {};
+      }
+
+      const result = await response.json();
+      if (result.success && result.data) {
+        return result.data; // Devuelve JSON
+      }
+
+      console.error("Respuesta sin éxito:", result);
+      return {};
+    } catch (error) {
+      console.error("Error:", error);
+      return {};
+    } finally {
+      setIsLoadingRecommendations(false);
+    }
+  };
 
   const handleUpload = async () => {
     if (!file || !pdfText) {
       setAlert("error");
       return;
     }
-
     if (!user) {
       console.error("No hay usuario logueado");
       setAlert("error");
       return;
     }
+    if (!plan || plan.credits < 15) {
+      router.push("/dashboard/buy-credits");
+      return;
+    }
 
     try {
-      // 1. Obtener los créditos actuales
-      const { data: planData, error: planError } = await supabase
-        .from("plans")
-        .select("credits, id")
-        .eq("user_id", user.id)
-        .eq("status", "active")
-        .limit(1)
-        .single();
-
-      if (planError) throw planError;
-
-      if (!planData || planData.credits < 15) {
-        // No hay créditos suficientes
-        router.push("/dashboard/buy-credits");
-        return;
-      }
-
-      // 2. Descontar 15 créditos
+      // Descontar créditos
       const { error: updateError } = await supabase
         .from("plans")
-        .update({ credits: planData.credits - 15 })
-        .eq("id", planData.id);
-
+        .update({ credits: plan.credits - 15 })
+        .eq("id", plan.id);
       if (updateError) throw updateError;
 
-      // 3. Procesar el PDF (recomendaciones)
-      await recomendaciones(pdfText);
+      // Generar recomendaciones
+      const recs = await recomendaciones(pdfText);
+      const recsJson = recs || {}; // asegura JSON válido
+
+      // Guardar en Supabase
+      const { error: insertError } = await supabase
+        .from("user_sources")
+        .insert([
+          {
+            user_id: user.id,
+            source: file.name,
+            recomendaciones: recsJson,
+          },
+        ]);
+      if (insertError) throw insertError;
+
+      setRecommendations(recsJson);
       setAlert("success");
-      console.log("Archivo procesado y créditos descontados");
+      console.log("Archivo procesado y recomendaciones guardadas");
     } catch (err) {
       console.error("Error al procesar el archivo:", err);
       setAlert("error");

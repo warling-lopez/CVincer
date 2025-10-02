@@ -1,21 +1,46 @@
 "use client";
-import { Badge } from "@/components/ui/badge";
 
-export function Recommendations({ user }) {
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+export function Recommendations({ user, source }) {
+  if (!user) {
+    return <p className="text-sm text-gray-500">Inicia sesión para ver tus recomendaciones.</p>;
+  }
+
+  if (!source || !source.recomendaciones) {
+    return <p className="text-sm text-gray-500">Aún no tienes recomendaciones guardadas.</p>;
+  }
+
+  let recs = source.recomendaciones;
+  if (typeof recs === "string") {
+    try {
+      recs = JSON.parse(recs);
+    } catch (e) {
+      recs = [];
+    }
+  }
+  if (!Array.isArray(recs)) recs = [recs];
+
   return (
-    <div className="mt-6 p-4 border rounded-lg">
-      <h2 className="font-semibold text-lg mb-2">Recomendaciones</h2>
-      <ul className="list-disc pl-5 text-sm text-muted-foreground">
-        <li>Agrega más categorías a tus CVs para aumentar matching.</li>
-        <li>Completa tu perfil para obtener mejores sugerencias.</li>
-        <li>
-          Usa la función de “Mejorar CV” para optimizar documentos
-          automáticamente.
-        </li>
-      </ul>
-      <Badge className="mt-2 bg-blue-100 text-blue-700">
-        Tip: Mantén tus CVs actualizados
-      </Badge>
+    <div className="mt-6">
+      <h2 className="text-xl font-semibold mb-4">Tus recomendaciones</h2>
+      <Card className="shadow-md border border-gray-200">
+        <CardHeader>
+          <CardTitle className="text-base">
+            Fuente: <span className="font-normal text-gray-600">{source.source}</span>
+          </CardTitle>
+          <p className="text-xs text-gray-400">
+            {new Date(source.created).toLocaleString()}
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {recs.map((rec, idx) => (
+            <p key={idx} className="text-sm text-gray-700">
+              • {rec}
+            </p>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }

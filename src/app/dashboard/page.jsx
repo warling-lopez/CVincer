@@ -7,6 +7,7 @@ import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 import SourcePopup from "@/components/SourcePopup";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Recommendations } from "@/components/Recommendations";
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
@@ -17,12 +18,16 @@ export default function DashboardPage() {
     credits: 0,
     plan: "Gratis",
   });
+  const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
     let isMounted = true;
 
     const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       const currentUser = session?.user ?? null;
       if (!isMounted) return;
       setUser(currentUser);
@@ -38,10 +43,11 @@ export default function DashboardPage() {
         .limit(1)
         .single();
 
-      if (planError && planError.code !== "PGRST116") console.error("Error verificando plan:", planError);
+      if (planError && planError.code !== "PGRST116") {
+        console.error("Error verificando plan:", planError);
+      }
 
       if (!plansData) {
-        // Asigna plan free si no existe
         const { error: insertError } = await supabase.from("plans").insert([
           {
             user_id: currentUser.id,
@@ -53,32 +59,34 @@ export default function DashboardPage() {
             status: "active",
           },
         ]);
-        if (insertError) console.error("Error asignando plan FREE:", insertError);
+        if (insertError) {
+          console.error("Error asignando plan FREE:", insertError);
+        }
       }
+      // Fetch la última recomendación únicamente
+      const { data: recs, error: recError } = await supabase
+        .from("user_sources")
+        .select("recomendaciones")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
 
-      // Fetch stats
-      const [cvs, offers, categories] = await Promise.all([
-        supabase.from("cvs").select("*").eq("user_id", currentUser.id),
-        supabase.from("offers").select("*").eq("user_id", currentUser.id),
-        supabase.from("categories").select("*").eq("user_id", currentUser.id),
-      ]);
+      if (recError) {
+        console.error("Error obteniendo user_sources:", recError);
+      }
+      console.log("Última recomendación obtenida:", recs);
+      setRecommendations(recs);
 
-      if (!isMounted) return;
-      setStats({
-        cvsGenerated: cvs.data?.length ?? 0,
-        offersCaptured: offers.data?.length ?? 0,
-        categoriesUsed: categories.data?.length ?? 0,
-        credits: plansData?.credits ?? 10,
-        plan: plansData?.plan_name ?? "Gratis",
-      });
     };
 
     init();
 
-    const { subscription } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!isMounted) return;
-      setUser(session?.user ?? null);
-    });
+    const { subscription } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!isMounted) return;
+        setUser(session?.user ?? null);
+      }
+    );
 
     return () => {
       isMounted = false;
@@ -101,7 +109,11 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
               <SectionCards stats={stats} />
             </div>
+
             {user && <SourcePopup user={user} />}
+
+            {/* Pasamos los user_sources al componente de recomendaciones */}
+            <Recommendations user={user} sources={recommendations} />
           </div>
         </div>
       </SidebarInset>
