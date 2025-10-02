@@ -648,7 +648,8 @@ const LanguageToggle = () => {
 // ============================================================================
 const Header = () => {
   const { t } = useLanguage();
-  const openLogin = () => {
+  const router = useRouter();
+  const openSignup = () => {
     // Logic to open login modal
     router.push("/log");
   };
@@ -664,10 +665,10 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           <LanguageToggle />
 
-          <Button variant="ghost" size="md" onClick={openLogin}>
+          <Button variant="ghost" size="md" onClick={openSignup}>
             {t("header.login")}
           </Button>
-          <Button variant="primary" size="md" onClick={openLogin}>
+          <Button variant="primary" size="md" onClick={openSignup}>
             {t("header.signup")}
           </Button>
         </div>
