@@ -54,7 +54,7 @@ const data = {
     },
     {
       title: "Ofertas",
-      url: "#",
+      url: "/dashboard/offers",
       icon: IconFolder,
     },
   ],
@@ -131,16 +131,6 @@ const data = {
       url: "/dashboard/cv-generator",
       icon: IconFileWord,
     },
-    {
-      name: "Reports",
-      url: "#",
-      icon: IconReport,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: IconFileWord,
-    },
   ],
 };
 
@@ -158,8 +148,8 @@ export function AppSidebar({ ...props }) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="/dashboard">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">CVincer.</span>
+                
+                <h1><span className="text-2xl font-bold text-blue-800 ">CVincer.</span></h1>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

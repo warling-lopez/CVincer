@@ -25,13 +25,14 @@ import {
   ChevronRight,
   User,
   LogOut,
+  TextAlignJustify,
 } from "lucide-react";
+
 import { useRouter } from "next/navigation";
 import supabase from "@/supabase/supabase";
 import { cn } from "@/lib/utils";
 
-
-  // ============================================================================
+// ============================================================================
 // 📁 lib/translations.js
 // ============================================================================
 
@@ -473,7 +474,7 @@ const buttonVariants = {
       link: "text-primary underline-offset-4 hover:underline",
     },
     size: {
-      md: "h-10 px-4 py-2",
+      md: "h-10 px-4 py-2 md:h-10 md:px-4 md:py-2",
       lg: "h-12 px-8 rounded-lg text-base",
       cta: "h-14 px-10 rounded-lg text-lg",
       icon: "h-10 w-10",
@@ -618,7 +619,7 @@ const LanguageToggle = () => {
   );
 
   return (
-    <div className="flex items-center space-x-2 rounded-full border border-slate-200 p-1">
+    <div className="flex items-center space-x-2 rounded-full border  border-slate-200 p-1">
       <button
         onClick={() => setLanguage("es")}
         className={cn(
@@ -649,30 +650,80 @@ const LanguageToggle = () => {
 const Header = () => {
   const { t } = useLanguage();
   const router = useRouter();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const openSignup = () => {
     // Logic to open login modal
     router.push("/log");
   };
   return (
-    <header className="sticky top-0 bg-white/80 backdrop-blur-lg z-40 border-b border-slate-200/80">
-      <div className="container mx-auto px-6 py-3 flex justify-between items-center">
+    <header className="fixed w-full h-20 flex items-center top-0 bg-white/80 backdrop-blur-lg backdrop-saturate-150 z-40">
+      <div className="container mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
+        {/* Logo */}
         <a href="#" className="flex items-center space-x-2">
           <Target className="h-8 w-8 text-blue-800" />
-          <span className="font-bold text-xl text-slate-900">
+          <span className="font-bold text-md md:text-xl text-slate-900">
             {t("header.appName")}
           </span>
         </a>
-        <div className="flex items-center space-x-4">
-          <LanguageToggle />
 
-          <Button variant="ghost" size="md" onClick={openSignup}>
-            {t("header.login")}
-          </Button>
-          <Button variant="primary" size="md" onClick={openSignup}>
-            {t("header.signup")}
-          </Button>
-        </div>
+        {/* Mobile menu button */}
+        <Button
+          variant="ghost"
+          size="md"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle menu"
+          aria-expanded={isMobileMenuOpen}
+        >
+          <TextAlignJustify />
+        </Button>
       </div>
+
+      {/* Overlay + Mobile menu */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-50 flex"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          {/* Fondo oscuro */}
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+          {/* Menu */}
+          <div
+            className="relative ml-auto w-[80vw] h-[100vh] bg-white/90 backdrop-blur-lg p-6 flex flex-col space-y-4 transition duration-300"
+            onClick={(e) => e.stopPropagation()} // evita cerrar al tocar dentro
+          >
+            <div className="flex items-center justify-between ml-auto">
+              <LanguageToggle />
+              <Button
+                variant="ghost"
+                size="md"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label="Toggle menu"
+                aria-expanded={isMobileMenuOpen}
+              >
+                <TextAlignJustify />
+              </Button>
+            </div>
+
+            <Button
+              variant="ghost"
+              size="md"
+              onClick={openSignup}
+              className="w-full"
+            >
+              {t("header.login")}
+            </Button>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={openSignup}
+              className="w-full"
+            >
+              {t("header.signup")}
+            </Button>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
@@ -688,7 +739,7 @@ const Hero = () => {
     router.push("/log");
   };
   return (
-    <section className="bg-slate-50 relative overflow-hidden">
+    <section className="bg-slate-50 top-10 md:top-1 relative overflow-hidden">
       <div className="absolute inset-0 bg-grid-slate-200 [mask-image:linear-gradient(to_bottom,white,transparent)]"></div>
       <div className="container mx-auto px-6 py-20 lg:py-32 text-center relative z-10">
         <span className="inline-block bg-amber-400 text-slate-800 text-sm font-semibold px-4 py-1 rounded-full mb-4">
@@ -1015,7 +1066,9 @@ export default function App() {
   const router = useRouter();
   useEffect(() => {
     try {
-      const authToken = localStorage.getItem("sb-bockeheqvteruvwulvhn-auth-token");
+      const authToken = localStorage.getItem(
+        "sb-bockeheqvteruvwulvhn-auth-token"
+      );
 
       if (authToken) {
         router.push("/dashboard");
