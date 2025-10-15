@@ -143,7 +143,7 @@ export function Recommendations({ user }) {
   };
 
   const getStatusIcon = (estado) => {
-    if (estado?.includes('✓') || estado?.includes('Completo')) {
+    if (estado?.includes('✅') || estado?.includes('Excelente')) {
       return <CheckCircle2 className="w-5 h-5 text-green-500" />;
     } else if (estado?.includes('⚠️') || estado?.includes('Necesita')) {
       return <AlertCircle className="w-5 h-5 text-amber-500" />;
@@ -153,7 +153,7 @@ export function Recommendations({ user }) {
   };
 
   const getStatusColor = (estado) => {
-    if (estado?.includes('✓') || estado?.includes('Completo')) {
+    if (estado?.includes('✅') || estado?.includes('Excelente')) {
       return 'bg-green-100 text-green-700 border-green-200';
     } else if (estado?.includes('⚠️') || estado?.includes('Necesita')) {
       return 'bg-amber-100 text-amber-700 border-amber-200';
@@ -260,7 +260,7 @@ export function Recommendations({ user }) {
 
   // Calcular estadísticas
   const secciones = recs.secciones || [];
-  const seccionesCompletas = secciones.filter(s => s.estado?.includes('✓') || s.estado?.includes('Completo')).length;
+  const seccionesCompletas = secciones.filter(s => s.estado?.includes('✅') || s.estado?.includes('Excelente')).length;
   const seccionesConMejoras = secciones.filter(s => s.estado?.includes('⚠️') || s.estado?.includes('Necesita')).length;
   const seccionesCriticas = secciones.filter(s => s.estado?.includes('❌') || s.estado?.includes('Faltante')).length;
 
@@ -471,7 +471,7 @@ export function Recommendations({ user }) {
                                 <p className="text-xs text-gray-700 whitespace-pre-line">{rec.ejemplo_antes}</p>
                               </div>
                               <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                                <p className="text-xs font-semibold text-green-700 mb-1">✓ Después</p>
+                                <p className="text-xs font-semibold text-green-700 mb-1">✅ Después</p>
                                 <p className="text-xs text-gray-700 whitespace-pre-line">{rec.ejemplo_despues}</p>
                               </div>
                             </div>
