@@ -232,7 +232,7 @@ const PricingPage = () => {
             {[
               { credits: 5, price: '$4.99', perCredit: '$0.99' },
               { credits: 15, price: '$10.95', perCredit: '$0.73', popular: true },
-              { credits: 35, price: '$21.99', perCredit: '$0.60' },
+              { credits: 35, price: '$21', perCredit: '$0.60' },
             ].map((bundle, idx) => (
               <Card
                 key={idx}
