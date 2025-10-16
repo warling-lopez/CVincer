@@ -28,7 +28,7 @@ export default function RefundPolicy() {
           items: [
             'Si te suscribes y cambias de opinión dentro de 7 días calendario, puedes solicitar reembolso completo',
             'Requisitos: Email de la cuenta, especificar razón (opcional)',
-            'Envía a: refunds@cvincer.com',
+            'Envía a: warlinglopez01@gmail.com',
             'Revisión: 2-3 días hábiles',
             'Reembolso: 3-5 días hábiles'
           ]
@@ -74,7 +74,7 @@ export default function RefundPolicy() {
           subtitle: '5.1 Cargos Duplicados',
           items: [
             'Si fuiste cargado dos veces por error',
-            'Contacta a billing@cvincer.com con comprobante',
+            'Contacta a warlinglopez01@gmail.com con comprobante',
             'Investigaremos en 24 horas',
             'Si es error nuestro, reembolsamos de inmediato'
           ]
@@ -82,7 +82,7 @@ export default function RefundPolicy() {
         {
           subtitle: '5.2 Acceso No Autorizado',
           items: [
-            'Contacta a support@cvincer.com inmediatamente',
+            'Contacta a warlinglopez01@gmail.com inmediatamente',
             'Cambio forzado de contraseña',
             'Podemos ofrecer reembolso si determinamos fraude'
           ]
@@ -105,7 +105,7 @@ export default function RefundPolicy() {
           subtitle: '6.1 Cómo Cancelar',
           items: [
             'Opción 1: Configuración → Facturación → Cancelar Suscripción',
-            'Opción 2: Email a cancel@cvincer.com',
+            'Opción 2: Email a warlingwarlinglopez01@gmail.com',
             'Procesamos en 24 horas'
           ]
         },
@@ -185,7 +185,7 @@ export default function RefundPolicy() {
     {
       id: 11,
       title: '11. Disputas y Contracargos',
-      content: 'Si abres un contracargo sin intentar resolver con nosotros primero, tu cuenta será suspendida. Por favor, contacta a refunds@cvincer.com primero.'
+      content: 'Si abres un contracargo sin intentar resolver con nosotros primero, tu cuenta será suspendida. Por favor, contacta a warlinglopez01@gmail.com primero.'
     },
     {
       id: 12,
@@ -193,7 +193,7 @@ export default function RefundPolicy() {
       subsections: [
         {
           subtitle: 'Paso 1 - Contacta:',
-          text: 'Email: refunds@cvincer.com | Asunto: "Solicitud de Reembolso"'
+          text: 'Email: warlinglopez01@gmail.com | Asunto: "Solicitud de Reembolso"'
         },
         {
           subtitle: 'Paso 2 - Información Requerida:',
@@ -348,7 +348,7 @@ export default function RefundPolicy() {
         <Alert className="mt-12 border-amber-200 bg-amber-50">
           <AlertCircle className="h-4 w-4 text-amber-600" />
           <AlertDescription className="text-amber-800">
-            <strong>Importante:</strong> Si tienes dudas sobre si aplicas para un reembolso, contáctanos primero a refunds@cvincer.com. Haremos lo posible por ayudarte.
+            <strong>Importante:</strong> Si tienes dudas sobre si aplicas para un reembolso, contáctanos primero a warlinglopez01@gmail.com. Haremos lo posible por ayudarte.
           </AlertDescription>
         </Alert>
 
@@ -361,11 +361,11 @@ export default function RefundPolicy() {
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div>
               <p className="text-sm font-semibold text-gray-900 mb-1">📧 Para Reembolsos:</p>
-              <p className="text-emerald-700 font-mono text-sm">refunds@cvincer.com</p>
+              <p className="text-emerald-700 font-mono text-sm">warlinglopez01@gmail.com</p>
             </div>
             <div>
               <p className="text-sm font-semibold text-gray-900 mb-1">💳 Para Facturación:</p>
-              <p className="text-emerald-700 font-mono text-sm">billing@cvincer.com</p>
+              <p className="text-emerald-700 font-mono text-sm">warlinglopez01@gmail.com</p>
             </div>
           </div>
           <p className="text-xs text-gray-600">

@@ -161,7 +161,7 @@ export default function TermsOfService() {
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">8.3 Eliminación</h3>
                 <p className="leading-relaxed">
-                  Puedes solicitar la eliminación de tu contenido en cualquier momento contactando a support@cvincer.com.
+                  Puedes solicitar la eliminación de tu contenido en cualquier momento contactando a warlinglopez01@cvincer.com.
                 </p>
               </div>
             </div>
@@ -243,7 +243,7 @@ export default function TermsOfService() {
             </p>
             <div className="space-y-2 text-gray-700">
               <p><strong>CVincer Support</strong></p>
-              <p>Email: <span className="font-mono">legal@cvincer.com</span></p>
+              <p>Email: <span className="font-mono">warlinglopez01@cvincer.com</span></p>
               <p>Sitio Web: <span className="font-mono">www.cvincer.com</span></p>
             </div>
           </section>

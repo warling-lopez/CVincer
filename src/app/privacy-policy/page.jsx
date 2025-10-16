@@ -96,7 +96,7 @@ export default function PrivacyPolicy() {
         },
         {
           subtitle: '6.2 Cómo Ejercer tus Derechos',
-          text: 'Contacta a privacy@cvincer.com. Responderemos en 30 días.'
+          text: 'Contacta a warlinglopez01@cvincer.com. Responderemos en 30 días.'
         }
       ]
     },
@@ -144,12 +144,12 @@ export default function PrivacyPolicy() {
       subsections: [
         {
           subtitle: '9.1 Responsable de Privacidad',
-          text: 'Email: privacy@cvincer.com'
+          text: 'Email: warlinglopez01@cvincer.com'
         },
         {
           subtitle: '9.2 Quejas',
           items: [
-            'Contacta a privacy@cvincer.com',
+            'Contacta a warlinglopez01@cvincer.com',
             'Si no estás satisfecho, contacta a la autoridad local',
             'UE: Autoridad de Protección de Datos local',
             'California: California Attorney General',
@@ -248,7 +248,7 @@ export default function PrivacyPolicy() {
             Si tienes dudas sobre cómo procesamos tus datos, contáctanos sin dudarlo.
           </p>
           <div className="space-y-2 text-sm text-gray-600">
-            <p><strong>Email:</strong> privacy@cvincer.com</p>
+            <p><strong>Email:</strong> warlinglopez01@cvincer.com</p>
             <p><strong>Sitio Web:</strong> www.cvincer.com</p>
             <p className="pt-2 text-xs text-gray-500">Tiempo de respuesta: Dentro de 30 días (o según lo requerido por ley)</p>
           </div>
