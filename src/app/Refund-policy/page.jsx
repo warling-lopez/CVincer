@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function RefundPolicy() {
+    
   const sections = [
     {
       id: 1,
