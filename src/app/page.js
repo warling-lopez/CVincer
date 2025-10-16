@@ -1017,10 +1017,10 @@ const Footer = () => {
             </span>
           </div>
           <div className="flex space-x-6 text-sm">
-            <a href="#" className="hover:text-white transition-colors">
+            <a href="/terms-of-service" className="hover:text-white transition-colors">
               {t("footer.terms")}
             </a>
-            <a href="#" className="hover:text-white transition-colors">
+            <a href="/privacy-policy" className="hover:text-white transition-colors">
               {t("footer.privacy")}
             </a>
             <a href="#" className="hover:text-white transition-colors">
@@ -1043,7 +1043,7 @@ const Footer = () => {
               <Linkedin className="h-5 w-5" />
             </a>
             <a
-              href="#"
+              href="https://github.com/warling-lopez"
               aria-label="GitHub"
               className="hover:text-white transition-colors"
             >
@@ -1094,8 +1094,7 @@ export default function App() {
           <Hero />
           <ProblemStatement />
           <HowItWorks />
-          <Features />
-          <Pricing />
+          <Features />  
           <CtaSection />
         </main>
         <Footer />

@@ -231,8 +231,8 @@ const PricingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { credits: 5, price: '$4.99', perCredit: '$0.99' },
-              { credits: 15, price: '$12.99', perCredit: '$0.86', popular: true },
-              { credits: 50, price: '$34.99', perCredit: '$0.70' },
+              { credits: 15, price: '$10.95', perCredit: '$0.73', popular: true },
+              { credits: 35, price: '$21.99', perCredit: '$0.60' },
             ].map((bundle, idx) => (
               <Card
                 key={idx}
@@ -255,7 +255,7 @@ const PricingPage = () => {
                       <span className="text-4xl font-bold text-gray-900">
                         {bundle.credits}
                       </span>
-                      <span className="text-gray-600">Créditos</span>
+                      <span className="text-gray-600">Usos</span>
                     </div>
                     <p className="text-2xl font-bold text-gray-900">{bundle.price}</p>
                     <p className="text-sm text-gray-600">
