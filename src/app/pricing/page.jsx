@@ -363,9 +363,9 @@ const PricingPage = () => {
               <p className="text-gray-400 text-sm">© 2025 CVincer. Todos los derechos reservados.</p>
             </div>
             <div className="flex gap-6 text-sm text-gray-400">
-              <a href="#" className="hover:text-white transition-colors">Términos de Servicio</a>
-              <a href="#" className="hover:text-white transition-colors">Política de Privacidad</a>
-              <a href="#" className="hover:text-white transition-colors">Contacto</a>
+              <a href="" className="hover:text-white transition-colors">Términos de Servicio</a>
+              <a href="" className="hover:text-white transition-colors">Política de Privacidad</a>
+              <a href="https://mail.google.com/mail/u/0/?hl=es#inbox?compose=GTvVlcRzDsVlShjlTbKnrgbPMNJhXfcLXPjfbTdnbQNCmgHfCgPqWjLcQwwWPPmnmBSjhBgqvPLbb" className="hover:text-white transition-colors">Contacto</a>
             </div>
           </div>
         </div>
