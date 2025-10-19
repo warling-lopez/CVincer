@@ -174,7 +174,7 @@ export default function TermsOfService() {
                   7.2 Reembolsos
                 </h3>
                 <p className="leading-relaxed">
-                  aplica la Política de Reembolsos disponible en <a className="text-blue-800" href="/refund-policy">Política de Reembolso</a> Los reembolsos son gestionados por Paddle conforme a la política publicada.
+                  aplica la Política de Reembolsos disponible en <a className="text-blue-800" href="/refunds-policy">Política de Reembolso</a> Los reembolsos son gestionados por Paddle conforme a la política publicada.
                 </p>
               </div>
               <div>

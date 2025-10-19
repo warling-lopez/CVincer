@@ -364,7 +364,7 @@ const PricingPage = () => {
             </div>
             <div className="flex gap-6 text-sm text-gray-400">
               <a href="/terms-of-service" className="hover:text-white transition-colors">Términos de Servicio</a>
-              <a href="/refund-policy" className="hover:text-white transition-colors">Política de Privacidad</a>
+              <a href="/refunds-policy" className="hover:text-white transition-colors">Política de Privacidad</a>
               <a href="#" className="hover:text-white transition-colors">Contacto</a>
             </div>
           </div>
