@@ -112,8 +112,8 @@ export function LoginForm({ className, ...props }) {
       </div>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
         Al hacer clic en continuar, aceptas nuestros{" "}
-        <a href="#">Términos de servicio</a> y la{" "}
-        <a href="#">Política de privacidad</a>.
+        <a href="/terms-of-service">Términos de servicio</a> y la{" "}
+        <a href="/refund-policy">Política de privacidad</a>.
       </div>
     </div>
   );

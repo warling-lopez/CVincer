@@ -1029,14 +1029,7 @@ const Footer = () => {
           </div>
           <div className="flex space-x-6">
             <a
-              href="#"
-              aria-label="Twitter"
-              className="hover:text-white transition-colors"
-            >
-              <Twitter className="h-5 w-5" />
-            </a>
-            <a
-              href="#"
+              href="https://www.linkedin.com/in/warling-sebastian-l%C3%B3pez-genao-459a5b2a7/"
               aria-label="LinkedIn"
               className="hover:text-white transition-colors"
             >
