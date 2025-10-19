@@ -58,7 +58,6 @@ const PricingPage = () => {
       description: 'Máximo Empuje',
       features: [
         { text: 'Todo lo del plan Pro', included: true },
-        { text: 'Sincronización LinkedIn', included: true },
         { text: 'Exportación PDF', included: true },
         { text: 'Análisis de ofertas', included: true },
         { text: 'Múltiples versiones', included: true },
