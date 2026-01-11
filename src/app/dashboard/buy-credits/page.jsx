@@ -9,6 +9,7 @@ export default function App() {
   };
   return (
     <div className="App">
+      <h1 className="bg-red-200">hola</h1>
       <PayPalScriptProvider options={initialOptions}>
         <PayPalButtons />
       </PayPalScriptProvider>
