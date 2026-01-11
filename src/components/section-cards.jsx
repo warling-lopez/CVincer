@@ -32,9 +32,9 @@ export function SectionCards({ user }) {
       cvs_created: { clicks: 0, created: 0 },
     },
   };
-  const reDirect= (url)=>{
-    router.push=`${url}`
-  }
+  const reDirect = (url) => {
+    router.push = `${url}`;
+  };
   useEffect(() => {
     if (!user) return;
 
@@ -52,13 +52,16 @@ export function SectionCards({ user }) {
 
       if (!data) {
         // Crear registro si no existe
-        const { error: insertError } = await supabase.from("user_dashboard").insert([
-          {
-            user_id: user.id,
-            dashboard: defaultDashboard,
-          },
-        ]);
-        if (insertError) console.error("Error creating dashboard:", insertError);
+        const { error: insertError } = await supabase
+          .from("user_dashboard")
+          .insert([
+            {
+              user_id: user.id,
+              dashboard: defaultDashboard,
+            },
+          ]);
+        if (insertError)
+          console.error("Error creating dashboard:", insertError);
         setStats(defaultDashboard.dash_cards);
       } else {
         setStats(data.dashboard.dash_cards);
@@ -69,8 +72,10 @@ export function SectionCards({ user }) {
   }, [user]);
 
   // Función para actualizar dashboard
-  async function updateDashboard(newStats) {
+  async function updateDashboard(newStats, RedirectUrl) {
     if (!user) return;
+
+    router.push("/dashboard/analytics");
 
     const { error } = await supabase
       .from("user_dashboard")
@@ -81,7 +86,8 @@ export function SectionCards({ user }) {
     setStats(newStats);
   }
 
-  if (!stats) return <p className="text-center text-gray-500">Cargando dashboard...</p>;
+  if (!stats)
+    return <p className="text-center text-gray-500">Cargando dashboard...</p>;
 
   return (
     <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs">
@@ -104,15 +110,16 @@ export function SectionCards({ user }) {
             className="mt-2 w-full"
             variant="secondary"
             onClick={() =>
-              updateDashboard({
-                ...stats,
-                offers_captured: {
-                  ...stats.offers_captured,
-                  clicks: stats.offers_captured.clicks + 1,
+              updateDashboard(
+                {
+                  ...stats,
+                  offers_captured: {
+                    ...stats.offers_captured,
+                    clicks: stats.offers_captured.clicks + 1,
+                  },
                 },
-              })
-              
-
+                "/dashboard/analytics"
+              )
             }
           >
             <IconPlus className="mr-2 size-4" /> Importar oferta
@@ -144,7 +151,6 @@ export function SectionCards({ user }) {
                   clicks: stats.cvs_analyzed.clicks + 1,
                 },
               })
-              
             }
           >
             <IconPlus className="mr-2 size-4" /> Analizar CV
@@ -177,7 +183,6 @@ export function SectionCards({ user }) {
                   clicks: stats.cvs_created.clicks + 1,
                 },
               })
-
             }
           >
             <IconPlus className="mr-2 size-4" /> Crear CV
