@@ -53,7 +53,7 @@ export default function DashboardPage() {
             user_id: currentUser.id,
             plan_type: "free",
             plan_name: "Free Plan",
-            credits: 10,
+            credits: 100,
             week_free: 0,
             duration: 1,
             status: "active",
