@@ -492,7 +492,7 @@ const Button = forwardRef(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <button
@@ -500,7 +500,7 @@ const Button = forwardRef(
           buttonVariants.base,
           buttonVariants.variants.variant[variant],
           buttonVariants.variants.size[size],
-          className
+          className,
         )}
         ref={ref}
         disabled={loading}
@@ -510,7 +510,7 @@ const Button = forwardRef(
         {children}
       </button>
     );
-  }
+  },
 );
 Button.displayName = "Button";
 
@@ -522,7 +522,7 @@ const Input = forwardRef(({ className, type, ...props }, ref) => (
     type={type}
     className={cn(
       "flex h-10 w-full rounded-md border border-slate-300 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-      className
+      className,
     )}
     ref={ref}
     {...props}
@@ -535,7 +535,7 @@ const Label = forwardRef(({ className, ...props }, ref) => (
     ref={ref}
     className={cn(
       "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-      className
+      className,
     )}
     {...props}
   />
@@ -549,7 +549,7 @@ const Card = ({ className, ...props }) => (
   <div
     className={cn(
       "rounded-xl border bg-white text-card-foreground shadow-lg transition-all",
-      className
+      className,
     )}
     {...props}
   />
@@ -561,7 +561,7 @@ const CardTitle = ({ className, ...props }) => (
   <h3
     className={cn(
       "text-2xl font-semibold leading-none tracking-tight",
-      className
+      className,
     )}
     {...props}
   />
@@ -624,7 +624,7 @@ const LanguageToggle = () => {
         onClick={() => setLanguage("es")}
         className={cn(
           "p-1.5 rounded-full transition-colors",
-          language === "es" ? "bg-blue-100 shadow-sm" : "hover:bg-slate-100"
+          language === "es" ? "bg-blue-100 shadow-sm" : "hover:bg-slate-100",
         )}
         aria-label="Switch to Spanish"
       >
@@ -634,7 +634,7 @@ const LanguageToggle = () => {
         onClick={() => setLanguage("en")}
         className={cn(
           "p-1.5 rounded-full transition-colors",
-          language === "en" ? "bg-blue-100 shadow-sm" : "hover:bg-slate-100"
+          language === "en" ? "bg-blue-100 shadow-sm" : "hover:bg-slate-100",
         )}
         aria-label="Switch to English"
       >
@@ -895,7 +895,7 @@ const Features = () => {
                 <span
                   className={cn(
                     "text-xs font-semibold px-2.5 py-1 rounded-full border",
-                    viabilityClasses[feature.viability]
+                    viabilityClasses[feature.viability],
                   )}
                 >
                   {viabilityTextMap[feature.viability]}
@@ -933,7 +933,7 @@ const Pricing = () => {
                 "flex flex-col",
                 plan.name === "Pro"
                   ? "border-2 border-blue-800 relative shadow-blue-800/10"
-                  : ""
+                  : "",
               )}
             >
               {plan.name === "Pro" && (
@@ -1017,10 +1017,16 @@ const Footer = () => {
             </span>
           </div>
           <div className="flex space-x-6 text-sm">
-            <a href="/terms-of-service" className="hover:text-white transition-colors">
+            <a
+              href="/terms-of-service"
+              className="hover:text-white transition-colors"
+            >
               {t("footer.terms")}
             </a>
-            <a href="/privacy-policy" className="hover:text-white transition-colors">
+            <a
+              href="/privacy-policy"
+              className="hover:text-white transition-colors"
+            >
               {t("footer.privacy")}
             </a>
             <a href="#" className="hover:text-white transition-colors">
@@ -1060,7 +1066,7 @@ export default function App() {
   useEffect(() => {
     try {
       const authToken = localStorage.getItem(
-        "sb-bockeheqvteruvwulvhn-auth-token"
+        "sb-bockeheqvteruvwulvhn-auth-token",
       );
 
       if (authToken) {
@@ -1087,7 +1093,7 @@ export default function App() {
           <Hero />
           <ProblemStatement />
           <HowItWorks />
-          <Features />  
+          <Features />
           <CtaSection />
         </main>
         <Footer />
