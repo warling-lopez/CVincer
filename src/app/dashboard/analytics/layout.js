@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
+import "@app/globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "CVincer - Elige tu oferta Dashboard",
+  title: "CVincer - analytics",
   description: "mejora tu CV y Destaca en el mercado laboral",
 };
 

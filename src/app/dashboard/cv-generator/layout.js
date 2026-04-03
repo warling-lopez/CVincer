@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "CVincer - Elige tu oferta Dashboard",
+  title: "CVincer - generador de CV",
   description: "mejora tu CV y Destaca en el mercado laboral",
 };
 
